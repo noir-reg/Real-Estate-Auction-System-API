@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+
 
 namespace BusinessObjects.Entities;
 
@@ -19,7 +21,10 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(GetConnectionStrings());
+        var connectString = GetConnectionStrings() == null ? GetConnectionStrings() : Environment.GetEnvironmentVariable("DefaultConnection");
+
+        optionsBuilder.UseSqlServer(connectString);
+
     }
 
     private static string GetConnectionStrings()
