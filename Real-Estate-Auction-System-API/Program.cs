@@ -79,7 +79,7 @@ public class Program
         app.UseSwagger();
         app.UseSwaggerUI();
 
-        app.UseCors();
+            app.UseCors();
 
         app.UseAuthentication();
         app.UseAuthorization();
