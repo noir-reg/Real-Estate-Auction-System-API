@@ -45,6 +45,9 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.CitizenId).IsRequired().HasMaxLength(12).IsFixedLength();
             builder.Property(e => e.Email).IsRequired().HasMaxLength(50);
             builder.Property(e => e.Password).IsRequired().HasMaxLength(32);
+            builder.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
+            builder.Property(e => e.LastName).IsRequired().HasMaxLength(30);
+            builder.Property(e => e.Username).IsRequired().HasMaxLength(30);
 
             // builder.HasOne(e => e.Role).WithMany(e => e.Users).HasForeignKey(e => e.RoleId).IsRequired();
         });

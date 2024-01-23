@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Utils;
 
 namespace Real_Estate_Auction_System_API;
 
@@ -22,6 +23,8 @@ public class Program
                 .AddJsonFile("appsettings.json").AddEnvironmentVariables()
                 .SetBasePath(Directory.GetCurrentDirectory()).Build().GetConnectionString("DefaultConnection"));
         });
+        builder.Services.AddRepositories();
+        builder.Services.AddServices();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
