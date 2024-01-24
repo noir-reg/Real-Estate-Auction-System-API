@@ -19,9 +19,7 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectString = GetConnectionStrings() == null
-            ? GetConnectionStrings()
-            : Environment.GetEnvironmentVariable("DefaultConnection");
+        var connectString = GetConnectionStrings();
 
         optionsBuilder.UseSqlServer(connectString);
     }
@@ -29,7 +27,8 @@ public class RealEstateDbContext : DbContext
     private static string GetConnectionStrings()
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json", true, true)
+            .AddJsonFile("appsettings.Development.json", true, true)
             .AddEnvironmentVariables()
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
