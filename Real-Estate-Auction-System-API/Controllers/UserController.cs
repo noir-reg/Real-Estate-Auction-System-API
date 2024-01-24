@@ -107,6 +107,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [Authorize]
     public async Task<IActionResult> GetAll()
     {
