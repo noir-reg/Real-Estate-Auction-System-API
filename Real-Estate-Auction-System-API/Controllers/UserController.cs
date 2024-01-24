@@ -1,9 +1,13 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Claims;
+using System.Text;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Services;
 
 namespace Real_Estate_Auction_System_API.Controllers;
@@ -12,11 +16,13 @@ namespace Real_Estate_Auction_System_API.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
+    private readonly IConfiguration _config;
     private readonly IUserService _userService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IConfiguration config)
     {
         _userService = userService;
+        _config = config;
     }
 
     [HttpPost("register")]
@@ -54,7 +60,7 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<IActionResult> Login([FromBody] LoginUserRequestDto loginUserRequestDto)
+    public async Task<ActionResult<LoginUserResponseDto>> Login([FromBody] LoginUserRequestDto loginUserRequestDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -65,8 +71,21 @@ public class UserController : ControllerBase
         {
             var result = await _userService.Login(username, password);
 
-            if (result == false) return BadRequest("Wrong username or password");
-            return Ok("Login Success");
+            if (result == null) return Unauthorized("Wrong username or password");
+
+            var userInfo = new UserInfo
+            {
+                UserId = result.UserId,
+                Email = result.Email,
+                Username = result.Username
+            };
+
+            var response = new LoginUserResponseDto
+            {
+                Token = GenerateJsonWebToken(userInfo),
+                UserInfo = userInfo
+            };
+            return Ok(response);
         }
         catch (Exception e)
         {
@@ -74,14 +93,42 @@ public class UserController : ControllerBase
         }
     }
 
+    private string GenerateJsonWebToken(UserInfo user)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        
+        var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+            _config["Jwt:Issuer"],
+            expires: DateTime.Now.AddMinutes(120),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         try
         {
             var result = await _userService.GetAll();
-            return Ok(result);
+
+            var response = result.Select(
+                user => new UserListResponse
+                {
+                    UserId = user.UserId,
+                    Username = user.Username,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Gender = user.Gender,
+                    DateOfBirth = user.DateOfBirth,
+                    CitizenId = user.CitizenId
+                });
+
+            return Ok(response);
         }
         catch (Exception e)
         {

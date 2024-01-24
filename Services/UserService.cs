@@ -12,13 +12,12 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<bool> Login(string username, string password)
+    public Task<User?> Login(string username, string password)
     {
         try
         {
-            var result = await _userRepository.GetOneAsync(username, password);
-            if (result == null) return false;
-            return true;
+            var result = _userRepository.GetOneAsync(username, password);
+            return result;
         }
         catch (Exception e)
         {

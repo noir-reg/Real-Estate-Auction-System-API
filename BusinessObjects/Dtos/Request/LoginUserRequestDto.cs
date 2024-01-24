@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusinessObjects.Dtos.Response;
+namespace BusinessObjects.Dtos.Request;
 
 public class LoginUserRequestDto
 {
