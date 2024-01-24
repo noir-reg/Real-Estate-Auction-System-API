@@ -19,7 +19,11 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(GetConnectionStrings());
+        var connectString = GetConnectionStrings() == null
+            ? GetConnectionStrings()
+            : Environment.GetEnvironmentVariable("DefaultConnection");
+
+        optionsBuilder.UseSqlServer(connectString);
     }
 
     private static string GetConnectionStrings()

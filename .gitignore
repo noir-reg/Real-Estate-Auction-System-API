@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .idea
+Real-Estate-Auction-System-API/appsettings.Development.json

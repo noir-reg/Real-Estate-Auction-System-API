@@ -1,7 +1,5 @@
 using System.Text;
-using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Utils;
@@ -17,12 +15,6 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        builder.Services.AddDbContext<RealEstateDbContext>(optionsBuilder =>
-        {
-            optionsBuilder.UseSqlServer(builder.Configuration
-                .AddJsonFile("appsettings.json").AddEnvironmentVariables()
-                .SetBasePath(Directory.GetCurrentDirectory()).Build().GetConnectionString("DefaultConnection"));
-        });
         builder.Services.AddRepositories();
         builder.Services.AddServices();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
