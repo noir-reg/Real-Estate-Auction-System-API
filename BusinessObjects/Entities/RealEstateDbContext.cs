@@ -19,17 +19,15 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectString = GetConnectionStrings() == null
-            ? GetConnectionStrings()
-            : Environment.GetEnvironmentVariable("DefaultConnection");
+         
 
-        optionsBuilder.UseSqlServer(connectString);
+        optionsBuilder.UseSqlServer(GetConnectionStrings());
     }
 
     private static string GetConnectionStrings()
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json",optional:true)
             .AddEnvironmentVariables()
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
