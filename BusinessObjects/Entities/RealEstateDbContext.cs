@@ -19,15 +19,13 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-         
-
         optionsBuilder.UseSqlServer(GetConnectionStrings());
     }
 
     private static string GetConnectionStrings()
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json",optional:true)
+            .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", optional: true)
             .AddEnvironmentVariables()
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
@@ -50,6 +48,12 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
             builder.Property(e => e.LastName).IsRequired().HasMaxLength(30);
             builder.Property(e => e.Username).IsRequired().HasMaxLength(30);
+            builder.HasIndex(e => new
+            {
+                e.CitizenId,
+                e.Email,
+                e.Username
+            }).IsUnique();
 
             // builder.HasOne(e => e.Role).WithMany(e => e.Users).HasForeignKey(e => e.RoleId).IsRequired();
         });
