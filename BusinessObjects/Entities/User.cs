@@ -2,7 +2,7 @@
 
 namespace BusinessObjects.Entities;
 
-public class User
+public abstract class User
 {
     public Guid UserId { get; set; }
 
@@ -11,8 +11,6 @@ public class User
     public string LastName { get; set; }
     public string Username { get; set; }
 
-    // public int RoleId { get; set; }
-    // public Role Role { get; set; }
     public Gender Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
     public string CitizenId { get; set; }

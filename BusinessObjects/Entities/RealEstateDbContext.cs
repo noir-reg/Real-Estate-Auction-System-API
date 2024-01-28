@@ -13,8 +13,17 @@ public class RealEstateDbContext : DbContext
     {
     }
 
-    //public virtual DbSet<Role> Roles { get; set; }
-    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Staff> Staffs { get; set; }
+    public virtual DbSet<Member> Members { get; set; }
+    public virtual DbSet<Auction> Auctions { get; set; }
+    public virtual DbSet<AuctionRegistration> AuctionRegistrations { get; set; }
+    public virtual DbSet<Admin> Admins { get; set; }
+    public virtual DbSet<Bid> Bids { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<RealEstate> RealEstates { get; set; }
+    public virtual DbSet<RealEstateOwner> RealEstateOwners { get; set; }
+    public virtual DbSet<LegalDocument> LegalDocuments { get; set; }
+    
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,7 +34,7 @@ public class RealEstateDbContext : DbContext
     private static string GetConnectionStrings()
     {
         var config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", optional: true)
+            .AddJsonFile("appsettings.json").AddJsonFile("appsettings.Development.json", true)
             .AddEnvironmentVariables()
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
@@ -39,7 +48,6 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.UserId);
             builder.Property(e => e.UserId).ValueGeneratedOnAdd();
-            //builder.Property(e => e.RoleId).IsRequired();
             builder.Property(e => e.Gender).IsRequired();
             builder.Property(e => e.DateOfBirth).IsRequired();
             builder.Property(e => e.CitizenId).IsRequired().HasMaxLength(12).IsFixedLength();
@@ -53,10 +61,11 @@ public class RealEstateDbContext : DbContext
                 e.CitizenId,
                 e.Email,
                 e.Username
-            }).IsUnique();
-
-            // builder.HasOne(e => e.Role).WithMany(e => e.Users).HasForeignKey(e => e.RoleId).IsRequired();
+            }).IsUnique()
+            ;
         });
+
+        modelBuilder.Entity<User>().ToTable("Users");
 
 
         // modelBuilder.Entity<Role>(builder =>

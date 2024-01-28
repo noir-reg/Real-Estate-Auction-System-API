@@ -12,42 +12,42 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public Task<User?> Login(string username, string password)
-    {
-        try
-        {
-            var result = _userRepository.GetOneAsync(username, password);
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public Task<List<User>> GetAll()
-    {
-        try
-        {
-            var result = _userRepository.GetAsync();
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public Task AddAsync(User newUser)
-    {
-        try
-        {
-            var result = _userRepository.AddAsync(newUser);
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
+    // public Task<User?> Login(string username, string password)
+    // {
+    //     try
+    //     {
+    //         var result = _userRepository.GetOneAsync(username, password);
+    //         return result;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         throw new Exception(e.Message);
+    //     }
+    // }
+    //
+    // public Task<List<User>> GetAll()
+    // {
+    //     try
+    //     {
+    //         var result = _userRepository.GetAsync();
+    //         return result;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         throw new Exception(e.Message);
+    //     }
+    // }
+    //
+    // public Task AddAsync(User newUser)
+    // {
+    //     try
+    //     {
+    //         var result = _userRepository.AddAsync(newUser);
+    //         return result;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         throw new Exception(e.Message);
+    //     }
+    // }
 }

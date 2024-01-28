@@ -32,22 +32,22 @@ public class UserController : ControllerBase
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
 
-        var newUser = new User
-        {
-            FirstName = registerUserRequestDto.FirstName,
-            LastName = registerUserRequestDto.LastName,
-            Username = registerUserRequestDto.Username,
-            Password = registerUserRequestDto.Password,
-            Gender = registerUserRequestDto.Gender,
-            DateOfBirth = registerUserRequestDto.DateOfBirth,
-            CitizenId = registerUserRequestDto.CitizenId,
-            Email = registerUserRequestDto.Email
-        };
+        // var newUser = new User
+        // {
+        //     FirstName = registerUserRequestDto.FirstName,
+        //     LastName = registerUserRequestDto.LastName,
+        //     Username = registerUserRequestDto.Username,
+        //     Password = registerUserRequestDto.Password,
+        //     Gender = registerUserRequestDto.Gender,
+        //     DateOfBirth = registerUserRequestDto.DateOfBirth,
+        //     CitizenId = registerUserRequestDto.CitizenId,
+        //     Email = registerUserRequestDto.Email
+        // };
 
 
         try
         {
-            await _userService.AddAsync(newUser);
+            // await _userService.AddAsync(newUser);
             return Ok("Success");
         }
         catch (Exception e)
@@ -68,23 +68,23 @@ public class UserController : ControllerBase
 
         try
         {
-            var result = await _userService.Login(username, password);
-
-            if (result == null) return Unauthorized("Wrong username or password");
-
-            var userInfo = new UserInfo
-            {
-                UserId = result.UserId,
-                Email = result.Email,
-                Username = result.Username
-            };
-
-            var response = new LoginUserResponseDto
-            {
-                Token = GenerateJsonWebToken(userInfo),
-                UserInfo = userInfo
-            };
-            return Ok(response);
+            // var result = await _userService.Login(username, password);
+            //
+            // if (result == null) return Unauthorized("Wrong username or password");
+            //
+            // var userInfo = new UserInfo
+            // {
+            //     UserId = result.UserId,
+            //     Email = result.Email,
+            //     Username = result.Username
+            // };
+            //
+            // var response = new LoginUserResponseDto
+            // {
+            //     Token = GenerateJsonWebToken(userInfo),
+            //     UserInfo = userInfo
+            // };
+            return Ok();
         }
         catch (Exception e)
         {
@@ -113,22 +113,22 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _userService.GetAll();
-
-            var response = result.Select(
-                user => new UserListResponse
-                {
-                    UserId = user.UserId,
-                    Username = user.Username,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Gender = user.Gender,
-                    DateOfBirth = user.DateOfBirth,
-                    CitizenId = user.CitizenId
-                });
-
-            return Ok(response);
+            // var result = await _userService.GetAll();
+            //
+            // var response = result.Select(
+            //     user => new UserListResponse
+            //     {
+            //         UserId = user.UserId,
+            //         Username = user.Username,
+            //         Email = user.Email,
+            //         FirstName = user.FirstName,
+            //         LastName = user.LastName,
+            //         Gender = user.Gender,
+            //         DateOfBirth = user.DateOfBirth,
+            //         CitizenId = user.CitizenId
+            //     });
+            //
+            return Ok();
         }
         catch (Exception e)
         {
