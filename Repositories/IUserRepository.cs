@@ -1,6 +1,4 @@
-﻿using BusinessObjects.Entities;
-
-namespace Repositories;
+﻿namespace Repositories;
 
 public interface IUserRepository
 {

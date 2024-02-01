@@ -3,7 +3,6 @@ using System.Net;
 using System.Text;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
-using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

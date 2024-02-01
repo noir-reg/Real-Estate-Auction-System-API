@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240201032618_AddTonsOfEntities")]
+    partial class AddTonsOfEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,8 +39,9 @@ namespace BusinessObjects.Migrations
                     b.Property<DateTime>("AuctionPeriodStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CurrentBidId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("CurrentBid")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -68,8 +71,9 @@ namespace BusinessObjects.Migrations
                     b.Property<Guid>("StaffId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("StartingBidId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("StartingBid")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -81,21 +85,13 @@ namespace BusinessObjects.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid>("WinningBidId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<decimal>("WinningBid")
+                        .HasPrecision(18)
+                        .HasColumnType("decimal(18,0)");
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("CurrentBidId")
-                        .IsUnique();
-
                     b.HasIndex("StaffId");
-
-                    b.HasIndex("StartingBidId")
-                        .IsUnique();
-
-                    b.HasIndex("WinningBidId")
-                        .IsUnique();
 
                     b.ToTable("Auctions", (string)null);
                 });
@@ -303,7 +299,7 @@ namespace BusinessObjects.Migrations
                     b.Property<string>("CitizenId")
                         .IsRequired()
                         .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)")
+                        .HasColumnType("nchar(12)")
                         .IsFixedLength();
 
                     b.Property<DateTime>("DateOfBirth")
@@ -393,41 +389,17 @@ namespace BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.Bid", "CurrentBid")
-                        .WithOne()
-                        .HasForeignKey("BusinessObjects.Entities.Auction", "CurrentBidId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("BusinessObjects.Entities.Staff", "Staff")
                         .WithMany("Auctions")
                         .HasForeignKey("StaffId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.Bid", "StartingBid")
-                        .WithOne()
-                        .HasForeignKey("BusinessObjects.Entities.Auction", "StartingBidId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjects.Entities.Bid", "WinningBid")
-                        .WithOne()
-                        .HasForeignKey("BusinessObjects.Entities.Auction", "WinningBidId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Admin");
-
-                    b.Navigation("CurrentBid");
 
                     b.Navigation("RealEstate");
 
                     b.Navigation("Staff");
-
-                    b.Navigation("StartingBid");
-
-                    b.Navigation("WinningBid");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.AuctionRegistration", b =>

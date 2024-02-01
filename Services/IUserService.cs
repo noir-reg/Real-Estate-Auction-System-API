@@ -1,6 +1,4 @@
-﻿using BusinessObjects.Entities;
-
-namespace Services;
+﻿namespace Services;
 
 public interface IUserService
 {

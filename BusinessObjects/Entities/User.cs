@@ -15,4 +15,5 @@ public abstract class User
     public DateTime DateOfBirth { get; set; }
     public string CitizenId { get; set; }
     public string Email { get; set; }
+    public string PhoneNumber { get; set; }
 }

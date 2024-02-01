@@ -8,7 +8,8 @@ public class RealEstate
     public string Description { get; set; }
     public string ImageUrl { get; set; }
     public string Status { get; set; }
-    public IEnumerable<LegalDocument> LegalDocuments { get; set; }
+    public IEnumerable<LegalDocument> LegalDocuments { get; set; } = new List<LegalDocument>();
     public Guid OwnerId { get; set; }
     public RealEstateOwner Owner { get; set; }
+    public Auction Auction { get; set; }
 }
