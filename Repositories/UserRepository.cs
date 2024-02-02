@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects.Dtos.Response;
+using BusinessObjects.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories;
 
@@ -11,43 +13,24 @@ public class UserRepository : IUserRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task AddAsync(User newUser)
+    public Task<UserInfo?> Login(string username, string password)
     {
         try
         {
-            _context.Add(newUser);
-            return _context.SaveChangesAsync();
+            var result = _context.Admins.OfType<User>().Concat(_context.Staffs.OfType<User>())
+                .Concat(_context.Members.OfType<User>()).Where(x => x.Username == username && x.Password == password)
+                .Select(x => new UserInfo
+                {
+                    UserId = x.UserId,
+                    Email = x.Email,
+                    Username = x.Username,
+                    Role = x.Role
+                }).SingleOrDefaultAsync();
+            return result;
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
     }
-
-    // public Task<User?> GetOneAsync(string username, string password)
-    // {
-    //     try
-    //     {
-    //         var result = _context.Users.SingleOrDefaultAsync(e => e.Username == username && e.Password == password);
-    //
-    //         return result;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
-    //
-    // public Task<List<User>> GetAsync()
-    // {
-    //     try
-    //     {
-    //         var result = _context.Users.ToListAsync();
-    //         return result;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
 }

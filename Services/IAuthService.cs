@@ -1,8 +1,8 @@
 ﻿using BusinessObjects.Dtos.Response;
 
-namespace Repositories;
+namespace Services;
 
-public interface IUserRepository
+public interface IAuthService
 {
     Task<UserInfo?> Login(string username, string password);
 }

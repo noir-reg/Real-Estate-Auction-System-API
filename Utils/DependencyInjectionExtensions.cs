@@ -8,11 +8,23 @@ public static class DependencyInjectionExtensions
 {
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IMemberService, MemberService>();
+        services.AddScoped<IAuctionService, AuctionService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IMemberRepository, MemberRepository>();
+        services.AddScoped<IAuctionRepository, AuctionRepository>();
+        services.AddScoped<IAuctionRegistrationRepository, AuctionRegistrationRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IBidRepository, BidRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IRealEstateRepository, RealEstateRepository>();
+        services.AddScoped<IRealEstateOwnerRepository, RealEstateOwnerRepository>();
+        services.AddScoped<ILegalDocumentRepository, LegalDocumentRepository>();
+        services.AddScoped<IStaffRepository, StaffRepository>();
     }
 }
