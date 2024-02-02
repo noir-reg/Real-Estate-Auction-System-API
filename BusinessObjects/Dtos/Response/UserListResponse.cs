@@ -2,7 +2,7 @@
 
 namespace BusinessObjects.Dtos.Response;
 
-public class UserListResponse
+public abstract class UserListResponse
 {
     public Guid UserId { get; set; }
     public string Username { get; set; }
