@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240202033546_UpdateDiscriminatorColumn")]
+    partial class UpdateDiscriminatorColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,13 +88,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("AdminId")
-                        .IsUnique();
-
                     b.HasIndex("CurrentBidId")
-                        .IsUnique();
-
-                    b.HasIndex("RealEstateId")
                         .IsUnique();
 
                     b.HasIndex("StaffId");
@@ -388,9 +384,15 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.Auction", b =>
                 {
+                    b.HasOne("BusinessObjects.Entities.RealEstate", "RealEstate")
+                        .WithOne("Auction")
+                        .HasForeignKey("BusinessObjects.Entities.Auction", "AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BusinessObjects.Entities.Admin", "Admin")
                         .WithOne("Auction")
-                        .HasForeignKey("BusinessObjects.Entities.Auction", "AdminId")
+                        .HasForeignKey("BusinessObjects.Entities.Auction", "AuctionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -398,12 +400,6 @@ namespace BusinessObjects.Migrations
                         .WithOne()
                         .HasForeignKey("BusinessObjects.Entities.Auction", "CurrentBidId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjects.Entities.RealEstate", "RealEstate")
-                        .WithOne("Auction")
-                        .HasForeignKey("BusinessObjects.Entities.Auction", "RealEstateId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BusinessObjects.Entities.Staff", "Staff")
