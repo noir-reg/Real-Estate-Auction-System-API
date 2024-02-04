@@ -27,7 +27,7 @@ public class RealEstateDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(GetConnectionStrings());
+        optionsBuilder.UseSqlServer(GetConnectionStrings()).EnableSensitiveDataLogging();
     }
 
     private static string GetConnectionStrings()
