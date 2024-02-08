@@ -13,6 +13,8 @@ public class RealEstateDbContext : DbContext
     {
     }
 
+
+    public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Staff> Staffs { get; set; }
     public virtual DbSet<Member> Members { get; set; }
     public virtual DbSet<Auction> Auctions { get; set; }
