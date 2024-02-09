@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Dtos.Response;
+﻿using System.Linq.Expressions;
+using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,20 +14,71 @@ public class UserRepository : IUserRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task<UserInfo?> Login(string username, string password)
+    public async Task<UserInfo?> Login(string username, string password)
     {
         try
         {
-            var result = _context.Admins.OfType<User>().Concat(_context.Staffs.OfType<User>())
-                .Concat(_context.Members.OfType<User>()).Where(x => x.Username == username && x.Password == password)
-                .Select(x => new UserInfo
+            var admins = await _context.Admins
+                .Where(a => a.Username == username && a.Password == password)
+                .Select(a => new UserInfo
                 {
-                    UserId = x.UserId,
-                    Email = x.Email,
-                    Username = x.Username,
-                    Role = x.Role
-                }).SingleOrDefaultAsync();
+                    UserId = a.UserId,
+                    Email = a.Email,
+                    Username = a.Username,
+                    Role = nameof(Admin)
+                })
+                .ToListAsync();
+
+            var members = await _context.Members
+                .Where(m => m.Username == username && m.Password == password)
+                .Select(m => new UserInfo
+                {
+                    UserId = m.UserId,
+                    Email = m.Email,
+                    Username = m.Username,
+                    Role = nameof(Member)
+                })
+                .ToListAsync();
+
+            var staffs = await _context.Staffs
+                .Where(s => s.Username == username && s.Password == password)
+                .Select(s => new UserInfo
+                {
+                    UserId = s.UserId,
+                    Email = s.Email,
+                    Username = s.Username,
+                    Role = nameof(Staff)
+                })
+                .ToListAsync();
+
+            var users = admins.Concat(members).Concat(staffs);
+            return users.SingleOrDefault();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task<User?> GetUser(Expression<Func<User, bool>> predicate)
+    {
+        try
+        {
+            var result = _context.Users.SingleOrDefaultAsync(predicate);
             return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task Update(User user)
+    {
+        try
+        {
+            _context.Users.Update(user);
+            return _context.SaveChangesAsync();
         }
         catch (Exception e)
         {

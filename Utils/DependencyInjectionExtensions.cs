@@ -11,6 +11,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IMemberService, MemberService>();
         services.AddScoped<IAuctionService, AuctionService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddTransient<ITokenService, TokenService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)

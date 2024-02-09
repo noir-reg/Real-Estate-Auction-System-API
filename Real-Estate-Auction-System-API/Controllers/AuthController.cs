@@ -1,10 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Text;
+﻿using System.Net;
+using System.Security.Claims;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Services;
 
 namespace Real_Estate_Auction_System_API.Controllers;
@@ -15,11 +13,13 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IConfiguration _config;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(IAuthService authService, IConfiguration config)
+    public AuthController(IAuthService authService, IConfiguration config, ITokenService tokenService)
     {
         _authService = authService;
         _config = config;
+        _tokenService = tokenService;
     }
 
     [HttpPost("login")]
@@ -30,25 +30,35 @@ public class AuthController : ControllerBase
 
         if (userInfo == null) return Unauthorized("Invalid username or password");
 
+        var claims = new List<Claim>()
+        {
+            new(ClaimTypes.NameIdentifier, userInfo.UserId.ToString()),
+            new(ClaimTypes.Name, userInfo.Username),
+            new(ClaimTypes.Role, userInfo.Role)
+        };
+
+        var accessToken = _tokenService.GenerateAccessToken(claims);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+        
+        await _tokenService.SetRefreshToken(userInfo.UserId, refreshToken);
+        
         var result = new LoginUserResponseDto
         {
-            Token = GenerateJsonWebToken(userInfo),
+            Token = accessToken,
+            RefreshToken = refreshToken,
             UserInfo = userInfo
         };
 
         return Ok(result);
     }
 
-    private string GenerateJsonWebToken(UserInfo user)
+    [HttpPost("register")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    public async Task<IActionResult> Register([FromBody] RegisterMemberRequestDto request)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-            _config["Jwt:Issuer"],
-            expires: DateTime.Now.AddMinutes(120),
-            signingCredentials: credentials);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        await _authService.Register(request);
+        return Ok("Registration Success");
     }
 }

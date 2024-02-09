@@ -3,7 +3,7 @@ using BusinessObjects.Enums;
 
 namespace BusinessObjects.Dtos.Request;
 
-public class RegisterUserRequestDto
+public class RegisterMemberRequestDto
 {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress]
@@ -13,6 +13,12 @@ public class RegisterUserRequestDto
     public string Username { get; set; }
 
     [Required(ErrorMessage = "Password is required")]
+    [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
+    [MaxLength(32, ErrorMessage = "Password cannot exceeds 32 characters")]
+    [DataType(DataType.Password)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,32}$",
+        ErrorMessage =
+            "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character")]
     public string Password { get; set; }
 
     [Required(ErrorMessage = "Confirm Password is required")]
@@ -36,5 +42,13 @@ public class RegisterUserRequestDto
     [Required(ErrorMessage = "Citizen Id is required")]
     [MaxLength(12)]
     [MinLength(12)]
+    [RegularExpression("^([0-9]{3})([0-9]{1})([0-9]{2})([0-9]{6})$", ErrorMessage = "Invalid Citizen Id")]
     public string CitizenId { get; set; }
+
+    [Required(ErrorMessage = "Phone Number is required")]
+    [MaxLength(10)]
+    [MinLength(10)]
+    [DataType(DataType.PhoneNumber)]
+    [RegularExpression(@"(09|03|07|08|05)([0-9]{8})\b", ErrorMessage = "Invalid Phone Number")]
+    public string PhoneNumber { get; set; }
 }

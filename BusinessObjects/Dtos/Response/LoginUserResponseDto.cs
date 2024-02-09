@@ -12,4 +12,5 @@ public class LoginUserResponseDto
 {
     public string Token { get; set; }
     public UserInfo UserInfo { get; set; }
+    public string RefreshToken { get; set; }
 }
