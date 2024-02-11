@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using BusinessObjects.Entities;
 using Microsoft.Extensions.Configuration;
 using Repositories;
 
@@ -35,7 +36,25 @@ public class AuthService : IAuthService
     {
         try
         {
-            return _memberRepository.AddMemberAsync(dto);
+            var member = new Member()
+            {
+                Email = dto.Email,
+                Username = dto.Username,
+                Password = dto.Password,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Gender = dto.Gender,
+                DateOfBirth = dto.DateOfBirth,
+                CitizenId = dto.CitizenId,
+                PhoneNumber = dto.PhoneNumber
+            };
+            var result = _memberRepository.GetMemberAsync(dto.Username, dto.Password);
+            if (result.Result != null)
+            {
+                throw new Exception("User already exists");
+                
+            }
+            return _memberRepository.AddMemberAsync(member);
         }
         catch (Exception e)
         {

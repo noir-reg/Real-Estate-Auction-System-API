@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Dtos.Response;
+﻿using BusinessObjects.Dtos.Request;
+using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,8 @@ public class MemberRepository : IMemberRepository
         }
     }
 
+    
+
     public Task UpdateMemberAsync(Member member)
     {
         try
@@ -67,7 +70,8 @@ public class MemberRepository : IMemberRepository
     {
         try
         {
-            var result = _context.Members.SingleOrDefaultAsync(x => x.Username == username && x.Password == password);
+            var result =
+                _context.Members.SingleOrDefaultAsync(x => x.Username == username && x.Password == password);
             return result;
         }
         catch (Exception e)
