@@ -350,3 +350,69 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var8 sysname;
+SELECT @var8 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Users]') AND [c].[name] = N'Discriminator');
+IF @var8 IS NOT NULL EXEC(N'ALTER TABLE [Users] DROP CONSTRAINT [' + @var8 + '];');
+ALTER TABLE [Users] DROP COLUMN [Discriminator];
+GO
+
+ALTER TABLE [Users] ADD [Role] nvarchar(30) NOT NULL DEFAULT N'';
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240202033546_UpdateDiscriminatorColumn', N'6.0.26');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Auctions] DROP CONSTRAINT [FK_Auctions_RealEstates_AuctionId];
+GO
+
+ALTER TABLE [Auctions] DROP CONSTRAINT [FK_Auctions_Users_AuctionId];
+GO
+
+CREATE UNIQUE INDEX [IX_Auctions_AdminId] ON [Auctions] ([AdminId]);
+GO
+
+CREATE UNIQUE INDEX [IX_Auctions_RealEstateId] ON [Auctions] ([RealEstateId]);
+GO
+
+ALTER TABLE [Auctions] ADD CONSTRAINT [FK_Auctions_RealEstates_RealEstateId] FOREIGN KEY ([RealEstateId]) REFERENCES [RealEstates] ([RealEstateId]) ON DELETE CASCADE;
+GO
+
+ALTER TABLE [Auctions] ADD CONSTRAINT [FK_Auctions_Users_AdminId] FOREIGN KEY ([AdminId]) REFERENCES [Users] ([UserId]);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240202153646_FixForeignKeys', N'6.0.26');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Users] ADD [RefreshToken] nvarchar(max) NULL;
+GO
+
+ALTER TABLE [Users] ADD [RefreshTokenExpiryTime] datetime2 NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20240208135819_AddRefreshToken', N'6.0.26');
+GO
+
+COMMIT;
+GO
+
