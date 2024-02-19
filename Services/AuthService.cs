@@ -36,7 +36,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var member = new Member()
+            var member = new Member
             {
                 Email = dto.Email,
                 Username = dto.Username,
@@ -49,11 +49,7 @@ public class AuthService : IAuthService
                 PhoneNumber = dto.PhoneNumber
             };
             var result = _memberRepository.GetMemberAsync(dto.Username, dto.Password);
-            if (result.Result != null)
-            {
-                throw new Exception("User already exists");
-                
-            }
+            if (result.Result != null) throw new Exception("User already exists");
             return _memberRepository.AddMemberAsync(member);
         }
         catch (Exception e)

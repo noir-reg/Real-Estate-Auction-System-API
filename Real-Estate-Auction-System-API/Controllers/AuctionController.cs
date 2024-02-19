@@ -1,7 +1,4 @@
-﻿using BusinessObjects.Dtos.Request;
-using BusinessObjects.Dtos.Response;
-using BusinessObjects.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services;
 
 namespace Real_Estate_Auction_System_API.Controllers;
@@ -16,10 +13,11 @@ public class AuctionController : ControllerBase
     {
         _auctionService = auctionService;
     }
-    [HttpGet]
-    public async Task<ActionResult<ListResponseDto<Auction>>> GetAll([FromBody] ListRequestDto request)
-    {
-        var response = await _auctionService.GetAuctions(request);
-        return Ok(response);
-    }
+
+    // [HttpGet]
+    // public async Task<ActionResult<ListResponseDto<Auction>>> GetAll([FromBody] ListRequestDto<Auction> request)
+    // {
+    //     var response = await _auctionService.GetAuctions(request);
+    //     return Ok(response);
+    // }
 }

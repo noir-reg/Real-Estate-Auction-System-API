@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
 using Services;
@@ -53,5 +54,20 @@ public class TokenController : ControllerBase
         };
 
         return Ok(response);
+    }
+
+    [HttpPost("revoke")]
+    [Authorize]
+    public async Task<IActionResult> Revoke()
+    {
+        var username = User.Identity.Name;
+
+        var user = await _userRepository.GetUser(e => e.Username == username);
+        if (user is null) return BadRequest();
+
+        user.RefreshToken = null;
+        await _userRepository.Update(user);
+
+        return NoContent();
     }
 }

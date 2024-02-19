@@ -1,5 +1,4 @@
-﻿using BusinessObjects.Dtos.Request;
-using BusinessObjects.Dtos.Response;
+﻿using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,7 +50,6 @@ public class MemberRepository : IMemberRepository
         }
     }
 
-    
 
     public Task UpdateMemberAsync(Member member)
     {

@@ -1,7 +1,4 @@
-﻿using BusinessObjects.Dtos.Request;
-using BusinessObjects.Dtos.Response;
-using BusinessObjects.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using BusinessObjects.Entities;
 
 namespace Repositories;
 
@@ -14,31 +11,31 @@ public class AuctionRepository : IAuctionRepository
         _context = new RealEstateDbContext();
     }
 
-    public async Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto request)
-    {
-        var page = request.Page;
-        var pageSize = request.PageSize;
-        var offset = request.Offset;
-        try
-        {
-            var data = await _context.Auctions.AsNoTracking().Skip(offset).Take(pageSize).ToListAsync();
-            var total = await _context.Auctions.AsNoTracking().CountAsync();
-
-            var result = new ListResponseDto<Auction>()
-            {
-                Items = data,
-                Total = total,
-                Page = page,
-                PageSize = pageSize
-            };
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
+    // public async Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> request)
+    // {
+    //     var page = request.Page;
+    //     var pageSize = request.PageSize;
+    //     var offset = request.Offset;
+    //     try
+    //     {
+    //         var data = await _context.Auctions.AsNoTracking().Skip(offset).Take(pageSize).ToListAsync();
+    //         var total = await _context.Auctions.AsNoTracking().CountAsync();
+    //
+    //         var result = new ListResponseDto<Auction>
+    //         {
+    //             Items = data,
+    //             Total = total,
+    //             Page = page,
+    //             PageSize = pageSize
+    //         };
+    //
+    //         return result;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         throw new Exception(e.Message);
+    //     }
+    // }
 
     public Task AddAuction(Auction auction)
     {

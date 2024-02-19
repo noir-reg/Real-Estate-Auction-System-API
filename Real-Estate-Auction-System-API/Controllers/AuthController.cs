@@ -30,7 +30,7 @@ public class AuthController : ControllerBase
 
         if (userInfo == null) return Unauthorized("Invalid username or password");
 
-        var claims = new List<Claim>()
+        var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, userInfo.UserId.ToString()),
             new(ClaimTypes.Name, userInfo.Username),
@@ -39,9 +39,9 @@ public class AuthController : ControllerBase
 
         var accessToken = _tokenService.GenerateAccessToken(claims);
         var refreshToken = _tokenService.GenerateRefreshToken();
-        
+
         await _tokenService.SetRefreshToken(userInfo.UserId, refreshToken);
-        
+
         var result = new LoginUserResponseDto
         {
             Token = accessToken,
