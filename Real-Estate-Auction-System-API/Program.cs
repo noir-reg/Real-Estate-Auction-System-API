@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,10 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
         builder.Services.AddRepositories();
         builder.Services.AddServices();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -26,6 +30,7 @@ public class Program
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "REASProject", Version = "v1" });
+            options.SchemaFilter<EnumSchemaFilter>();
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

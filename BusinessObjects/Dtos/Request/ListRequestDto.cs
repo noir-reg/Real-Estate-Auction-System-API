@@ -1,4 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace BusinessObjects.Dtos.Request;
 
@@ -6,10 +8,10 @@ public class BaseQueryDto
 {
     public int Page { get; set; }
     public int PageSize { get; set; }
-    
-    [JsonIgnore]
-    public int Offset => (Page - 1) * PageSize;
+
+    [BindNever] public int Offset => (Page - 1) * PageSize;
 }
+
 
 public enum OrderDirection
 {

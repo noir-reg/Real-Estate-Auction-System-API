@@ -7,7 +7,7 @@ namespace Repositories;
 
 public interface IUserRepository
 {
-    Task<UserInfo?> Login(string username, string password);
+    Task<UserInfo?> Login(string email, string password);
     Task<User?> GetUser(Expression<Func<User, bool>> predicate);
     Task Update(User user);
     Task<List<UserListResponse>> GetUsersAsync(UserQuery request);
