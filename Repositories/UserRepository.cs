@@ -15,12 +15,12 @@ public class UserRepository : IUserRepository
         _context = new RealEstateDbContext();
     }
 
-    public async Task<UserInfo?> Login(string username, string password)
+    public async Task<UserInfo?> Login(string email, string password)
     {
         try
         {
             var admins = await _context.Admins
-                .Where(a => a.Username == username && a.Password == password)
+                .Where(a => a.Email == email && a.Password == password)
                 .Select(a => new UserInfo
                 {
                     UserId = a.UserId,
@@ -31,7 +31,7 @@ public class UserRepository : IUserRepository
                 .ToListAsync();
 
             var members = await _context.Members
-                .Where(m => m.Username == username && m.Password == password)
+                .Where(m => m.Email == email && m.Password == password)
                 .Select(m => new UserInfo
                 {
                     UserId = m.UserId,
@@ -42,7 +42,7 @@ public class UserRepository : IUserRepository
                 .ToListAsync();
 
             var staffs = await _context.Staffs
-                .Where(s => s.Username == username && s.Password == password)
+                .Where(s => s.Email == email && s.Password == password)
                 .Select(s => new UserInfo
                 {
                     UserId = s.UserId,
@@ -89,17 +89,16 @@ public class UserRepository : IUserRepository
 
     public Task<List<UserListResponse>> GetUsersAsync(UserQuery request)
     {
-
         var query = _context.Users.AsQueryable();
 
         if (!string.IsNullOrEmpty(request.Search?.Username))
-        {
-            query = query.Where(x=>x.Username.Contains(request.Search.Username));
-        }
+            query = query.Where(x => x.Username.Contains(request.Search.Username));
 
         query = request.SortBy switch
         {
-            UserSortBy.Username => request.OrderDirection == OrderDirection.ASC ? query.OrderBy(x => x.Username) : query.OrderByDescending(x => x.Username),
+            UserSortBy.Username => request.OrderDirection == OrderDirection.ASC
+                ? query.OrderBy(x => x.Username)
+                : query.OrderByDescending(x => x.Username)
         };
 
         query = query.Skip(request.Offset).Take(request.PageSize);
@@ -114,7 +113,7 @@ public class UserRepository : IUserRepository
             DateOfBirth = x.DateOfBirth,
             CitizenId = x.CitizenId,
             FirstName = x.FirstName,
-            LastName = x.LastName,
+            LastName = x.LastName
         }).ToListAsync();
 
         return data;

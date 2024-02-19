@@ -19,11 +19,11 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public Task<UserInfo?> Login(string username, string password)
+    public Task<UserInfo?> Login(string email, string password)
     {
         try
         {
-            var userInfo = _userRepository.Login(username, password);
+            var userInfo = _userRepository.Login(email, password);
             return userInfo;
         }
         catch (Exception e)

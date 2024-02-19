@@ -26,14 +26,14 @@ public class AuthController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<LoginUserResponseDto>> Login([FromBody] LoginUserRequestDto request)
     {
-        var userInfo = await _authService.Login(request.Username, request.Password);
+        var userInfo = await _authService.Login(request.Email, request.Password);
 
-        if (userInfo == null) return Unauthorized("Invalid username or password");
+        if (userInfo == null) return Unauthorized("Invalid email or password");
 
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, userInfo.UserId.ToString()),
-            new(ClaimTypes.Name, userInfo.Username),
+            new(ClaimTypes.Name, userInfo.Email),
             new(ClaimTypes.Role, userInfo.Role)
         };
 
