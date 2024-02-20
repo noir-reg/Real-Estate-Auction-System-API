@@ -2,9 +2,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Real_Estate_Auction_System_API.Hubs;
 using Utils;
 
 namespace Real_Estate_Auction_System_API;
@@ -16,7 +18,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
+        builder.Services.AddSignalR();
         builder.Services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -74,7 +76,8 @@ public class Program
 
         // Configure the HTTP request pipeline.
 
-
+        app.MapHub<ChatHub>("chat-hub");
+      
         app.UseSwagger();
         app.UseSwaggerUI();
 

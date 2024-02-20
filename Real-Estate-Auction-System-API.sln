@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Real-Estate-Auction-System-API", "Real-Estate-Auction-System-API\Real-Estate-Auction-System-API.csproj", "{57A9F084-3587-45DE-B5D8-622BA169C6FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Real-Estate-Auction-System-API", "Real-Estate-Auction-System-API\Real-Estate-Auction-System-API.csproj", "{57A9F084-3587-45DE-B5D8-622BA169C6FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObjects", "BusinessObjects\BusinessObjects.csproj", "{CC69A8C4-CD62-4048-91EE-5A59B5FDAE0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObjects", "BusinessObjects\BusinessObjects.csproj", "{CC69A8C4-CD62-4048-91EE-5A59B5FDAE0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{E5A4163E-89E2-41E9-A16D-F06BEE19C549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{E5A4163E-89E2-41E9-A16D-F06BEE19C549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{33351F71-75BA-4981-97D5-5F7ECACA804A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{33351F71-75BA-4981-97D5-5F7ECACA804A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{9EC00866-5466-4346-A679-17BB8ACA2952}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{9EC00866-5466-4346-A679-17BB8ACA2952}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D5621F7-3875-43F9-9B56-49E0E9A1AFB2}"
+	ProjectSection(SolutionItems) = preProject
+		UI.html = UI.html
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
