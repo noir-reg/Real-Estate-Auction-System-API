@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Dtos.Response;
+﻿using System.Linq.Expressions;
+using BusinessObjects.Dtos.Request;
+using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +15,11 @@ public class MemberRepository : IMemberRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task<List<MemberListResponse>> GetMembersAsync()
+    public Task<List<MemberListResponseDto>> GetMembersAsync()
     {
         try
         {
-            var result = _context.Members.Select(e => new MemberListResponse
+            var result = _context.Members.Select(e => new MemberListResponseDto
             {
                 UserId = e.UserId,
                 Username = e.Username,
@@ -64,18 +66,16 @@ public class MemberRepository : IMemberRepository
         }
     }
 
-    public Task<Member?> GetMemberAsync(string username, string password)
+    public Task<Member?> GetMemberAsync(Expression<Func<Member, bool>> predicate)
     {
-        try
-        {
-            var result =
-                _context.Members.SingleOrDefaultAsync(x => x.Username == username && x.Password == password);
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        var result = _context.Members.SingleOrDefaultAsync(predicate)
+            ;
+        return result;
+    }
+
+    public IQueryable<Member> GetMemberQuery()
+    {
+        return _context.Members.AsQueryable();
     }
 
     public Task DeleteMemberAsync(Member member)
@@ -84,6 +84,30 @@ public class MemberRepository : IMemberRepository
         {
             _context.Members.Remove(member);
             return _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task<int> GetCountMemberAsync(SearchMemberQuery request)
+    {
+        try
+        {
+            var query = _context.Members.AsQueryable();
+
+            if (request == null)
+            {
+                return query.CountAsync();
+            }
+            
+            if (!string.IsNullOrEmpty(request.Username))
+                query = query.Where(x => x.Username.Contains(request.Username));
+            
+          
+            
+            return query.CountAsync();
         }
         catch (Exception e)
         {
