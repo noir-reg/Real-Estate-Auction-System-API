@@ -49,7 +49,7 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.UserId);
             builder.Property(e => e.UserId).ValueGeneratedOnAdd();
-            builder.Property(e => e.Gender).IsRequired();
+            builder.Property(e => e.Gender).HasColumnType("nvarchar").HasMaxLength(10).IsRequired();
             builder.Property(e => e.DateOfBirth).IsRequired();
             builder.Property(e => e.CitizenId).IsRequired().HasMaxLength(12).IsFixedLength().HasColumnType("nvarchar");
             builder.Property(e => e.Email).IsRequired().HasMaxLength(50);
