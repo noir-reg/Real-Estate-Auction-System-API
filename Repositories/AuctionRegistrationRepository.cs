@@ -77,4 +77,9 @@ public class AuctionRegistrationRepository : IAuctionRegistrationRepository
             throw new Exception(e.Message);
         }
     }
+
+    public IQueryable<AuctionRegistration> GetAuctionRegistrationQuery()
+    {
+        return _context.AuctionRegistrations.AsQueryable();
+    }
 }

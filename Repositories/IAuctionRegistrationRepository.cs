@@ -9,4 +9,5 @@ public interface IAuctionRegistrationRepository
     Task DeleteAuctionRegistrationAsync(AuctionRegistration auctionRegistration);
     Task<List<AuctionRegistration>> GetAuctionRegistrations();
     Task AddAuctionRegistrationAsync(AuctionRegistration auctionRegistration);
+    IQueryable<AuctionRegistration> GetAuctionRegistrationQuery();
 }

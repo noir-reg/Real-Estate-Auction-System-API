@@ -19,11 +19,21 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public Task<UserInfo?> Login(string email, string password)
+    public async Task<UserInfo?> Login(string email, string password)
     {
         try
         {
-            var userInfo = _userRepository.Login(email, password);
+            var data = await _userRepository.GetUserAsync(x => email == x.Email && password == x.Password);
+
+            if (data == null) throw new Exception("User not found");
+
+            var userInfo = new UserInfo
+            {
+                UserId = data.UserId,
+                Email = data.Email,
+                Username = data.Username,
+                Role = data.Role
+            };
             return userInfo;
         }
         catch (Exception e)
@@ -32,7 +42,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public Task Register(RegisterMemberRequestDto dto)
+    public async Task Register(RegisterMemberRequestDto dto)
     {
         try
         {
@@ -48,9 +58,12 @@ public class AuthService : IAuthService
                 CitizenId = dto.CitizenId,
                 PhoneNumber = dto.PhoneNumber
             };
-            var result = _memberRepository.GetMemberAsync(dto.Username, dto.Password);
-            if (result.Result != null) throw new Exception("User already exists");
-            return _memberRepository.AddMemberAsync(member);
+
+            var email = dto.Email;
+
+            var result = await _memberRepository.GetMemberAsync(x => x.Email == email);
+            if (result != null) throw new Exception("User already exists");
+            await _memberRepository.AddMemberAsync(member);
         }
         catch (Exception e)
         {

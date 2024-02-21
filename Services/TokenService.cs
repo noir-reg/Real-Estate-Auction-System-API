@@ -64,7 +64,7 @@ public class TokenService : ITokenService
 
     public async Task SetRefreshToken(Guid userId, string refreshToken)
     {
-        var user = await _userRepository.GetUser(e => e.UserId == userId);
+        var user = await _userRepository.GetUserAsync(e => e.UserId == userId);
         if (user != null)
         {
             user.RefreshToken = refreshToken;

@@ -11,7 +11,7 @@ public class AuctionRepository : IAuctionRepository
         _context = new RealEstateDbContext();
     }
 
-    // public async Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> request)
+    // public async Task<Auction> GetAuctions(ListRequestDto<Auction> request)
     // {
     //     var page = request.Page;
     //     var pageSize = request.PageSize;
@@ -74,5 +74,10 @@ public class AuctionRepository : IAuctionRepository
         {
             throw new Exception(e.Message);
         }
+    }
+
+    public IQueryable<Auction> GetAuctionQuery()
+    {
+        return _context.Auctions.AsQueryable();
     }
 }

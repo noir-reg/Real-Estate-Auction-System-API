@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using BusinessObjects.Dtos.Request;
-using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,53 +14,8 @@ public class UserRepository : IUserRepository
         _context = new RealEstateDbContext();
     }
 
-    public async Task<UserInfo?> Login(string email, string password)
-    {
-        try
-        {
-            var admins = await _context.Admins
-                .Where(a => a.Email == email && a.Password == password)
-                .Select(a => new UserInfo
-                {
-                    UserId = a.UserId,
-                    Email = a.Email,
-                    Username = a.Username,
-                    Role = nameof(Admin)
-                })
-                .ToListAsync();
 
-            var members = await _context.Members
-                .Where(m => m.Email == email && m.Password == password)
-                .Select(m => new UserInfo
-                {
-                    UserId = m.UserId,
-                    Email = m.Email,
-                    Username = m.Username,
-                    Role = nameof(Member)
-                })
-                .ToListAsync();
-
-            var staffs = await _context.Staffs
-                .Where(s => s.Email == email && s.Password == password)
-                .Select(s => new UserInfo
-                {
-                    UserId = s.UserId,
-                    Email = s.Email,
-                    Username = s.Username,
-                    Role = nameof(Staff)
-                })
-                .ToListAsync();
-
-            var users = admins.Concat(members).Concat(staffs);
-            return users.SingleOrDefault();
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public Task<User?> GetUser(Expression<Func<User, bool>> predicate)
+    public Task<User?> GetUserAsync(Expression<Func<User, bool>> predicate)
     {
         try
         {
@@ -87,7 +41,7 @@ public class UserRepository : IUserRepository
         }
     }
 
-    public Task<List<UserListResponse>> GetUsersAsync(UserQuery request)
+    public Task<List<User>> GetUsersAsync(UserQuery request)
     {
         var query = _context.Users.AsQueryable();
 
@@ -103,19 +57,24 @@ public class UserRepository : IUserRepository
 
         query = query.Skip(request.Offset).Take(request.PageSize);
 
-        var data = query.Select(x => new UserListResponse
-        {
-            Username = x.Username,
-            Email = x.Email,
-            Role = x.Role,
-            UserId = x.UserId,
-            Gender = x.Gender,
-            DateOfBirth = x.DateOfBirth,
-            CitizenId = x.CitizenId,
-            FirstName = x.FirstName,
-            LastName = x.LastName
-        }).ToListAsync();
+        var data = query.ToListAsync();
 
         return data;
+    }
+
+    public IQueryable<User> GetUserQuery()
+    {
+        return _context.Users.AsQueryable();
+    }
+
+    public Task<int> GetUserCount(SearchUserQuery request)
+    {
+        var query = _context.Users.AsQueryable();
+
+        if (request == null) return query.CountAsync();
+
+        if (!string.IsNullOrEmpty(request.Username)) query = query.Where(x => x.Username.Contains(request.Username));
+
+        return query.CountAsync();
     }
 }

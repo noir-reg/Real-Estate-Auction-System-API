@@ -76,4 +76,9 @@ public class TransactionRepository : ITransactionRepository
             throw new Exception(e.Message);
         }
     }
+
+    public IQueryable<Transaction> GetTransactionQuery()
+    {
+        return _context.Transactions.AsQueryable();
+    }
 }

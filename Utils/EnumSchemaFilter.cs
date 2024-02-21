@@ -15,4 +15,4 @@ public class EnumSchemaFilter : ISchemaFilter
                 .ToList().ForEach(name => schema.Enum.Add(new OpenApiString($"{name}")));
         }
     }
-}   
+}

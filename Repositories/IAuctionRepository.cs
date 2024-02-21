@@ -8,5 +8,7 @@ public interface IAuctionRepository
     Task UpdateAuction(Auction auction);
 
     Task AddAuction(Auction auction);
+
     // Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> request);
+    IQueryable<Auction> GetAuctionQuery();
 }
