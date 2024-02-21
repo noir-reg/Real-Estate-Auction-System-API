@@ -83,7 +83,8 @@ public class AdminService : IAdminService
                 Gender = request.Gender,
                 PhoneNumber = request.PhoneNumber,
                 FirstName = request.FirstName,
-                LastName = request.LastName
+                LastName = request.LastName,
+                Password = request.Password
             };
 
             return _adminRepository.AddAdminAsync(admin);
