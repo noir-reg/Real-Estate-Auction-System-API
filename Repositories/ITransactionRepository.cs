@@ -9,4 +9,5 @@ public interface ITransactionRepository
     Task UpdateTransactionAsync(Transaction transaction);
     Task<List<Transaction>> GetTransactions();
     Task AddTransactionAsync(Transaction transaction);
+    IQueryable<Transaction> GetTransactionQuery();
 }

@@ -39,9 +39,7 @@ public class MemberService : IMemberService
             var query = _memberRepository.GetMemberQuery();
 
             if (!string.IsNullOrEmpty(request.Search?.Username))
-            {
                 query = query.Where(x => x.Username.Contains(request.Search.Username));
-            }
 
             query = request.SortBy switch
             {
@@ -84,9 +82,8 @@ public class MemberService : IMemberService
     }
 
 
-    public async Task UpdateMemberAsync(UpdateMemberRequestDto updateMemberRequestDto)
+    public async Task UpdateMemberAsync(Guid id, UpdateMemberRequestDto updateMemberRequestDto)
     {
-        var id = updateMemberRequestDto.MemberId;
         var toBeUpdated = await _memberRepository.GetMemberAsync(x => x.UserId == id);
 
         if (toBeUpdated == null) throw new Exception("Member not found");

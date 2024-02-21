@@ -24,11 +24,8 @@ public class MemberController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     public async Task<ActionResult<ListResponseBaseDto<MemberListResponseDto>>> GetAll([FromQuery] MemberQuery request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         var result = await _memberService.GetMembersAsync(request);
         return Ok(result);
     }
@@ -40,8 +37,7 @@ public class MemberController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        request.MemberId = id;
-        await _memberService.UpdateMemberAsync(request);
+        await _memberService.UpdateMemberAsync(id, request);
         return Ok("Update successfully");
     }
 

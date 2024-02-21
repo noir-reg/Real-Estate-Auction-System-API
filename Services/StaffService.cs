@@ -23,10 +23,10 @@ public class StaffService : IStaffService
         var page = request.Page;
 
         var query = _staffRepository.GetStaffQuery();
-        
+
         if (!string.IsNullOrEmpty(request.Search?.Username))
             query = query.Where(x => x.Username.Contains(request.Search.Username));
-        
+
         query = request.SortBy switch
         {
             StaffSortBy.Username => request.OrderDirection == OrderDirection.ASC
@@ -42,17 +42,17 @@ public class StaffService : IStaffService
             LastName = x.LastName,
             Email = x.Email
         }).ToListAsync();
-        
+
         var count = await _staffRepository.GetStaffCountAsync(request.Search);
 
-        var result = new ListResponseBaseDto<StaffListResponseDto>()
+        var result = new ListResponseBaseDto<StaffListResponseDto>
         {
             Data = data,
             Page = page,
             PageSize = pageSize,
             Total = count
         };
-        
+
         return result;
     }
 
@@ -74,9 +74,9 @@ public class StaffService : IStaffService
         return _staffRepository.AddStaffAsync(toBeAdded);
     }
 
-    public async Task UpdateStaffAsync(UpdateStaffRequestDto request)
+    public async Task UpdateStaffAsync(Guid id, UpdateStaffRequestDto request)
     {
-        var toBeUpdated = await _staffRepository.GetStaffAsync(x => x.UserId == request.StaffId);
+        var toBeUpdated = await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
         if (toBeUpdated is null) throw new Exception("Staff not found");
 
@@ -88,7 +88,7 @@ public class StaffService : IStaffService
         toBeUpdated.PhoneNumber = request.PhoneNumber ?? toBeUpdated.PhoneNumber;
         toBeUpdated.FirstName = request.FirstName ?? toBeUpdated.FirstName;
         toBeUpdated.LastName = request.LastName ?? toBeUpdated.LastName;
-        
+
         await _staffRepository.UpdateStaffAsync(toBeUpdated);
     }
 
@@ -98,13 +98,13 @@ public class StaffService : IStaffService
 
         query = query.Where(predicate);
 
-        var result = query.Select(x => new StaffDetailResponseDto()
+        var result = query.Select(x => new StaffDetailResponseDto
         {
             UserId = x.UserId,
             Username = x.Username,
-            Email = x.Email,
+            Email = x.Email
         }).SingleOrDefaultAsync();
-        
+
         return result;
     }
 
@@ -113,10 +113,10 @@ public class StaffService : IStaffService
         try
         {
             var toBeDeleted = await _staffRepository.GetStaffAsync(x => x.UserId == id);
-            
+
             if (toBeDeleted is null) throw new Exception("Staff not found");
-            
-             await _staffRepository.DeleteStaffAsync(toBeDeleted);
+
+            await _staffRepository.DeleteStaffAsync(toBeDeleted);
         }
         catch (Exception e)
         {

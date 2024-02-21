@@ -89,14 +89,12 @@ public class StaffRepository : IStaffRepository
         try
         {
             var query = _context.Staffs.AsQueryable();
-            
-            if(requestSearch == null) return query.CountAsync();
+
+            if (requestSearch == null) return query.CountAsync();
 
             if (!string.IsNullOrEmpty(requestSearch.Username))
-            {
                 query = query.Where(x => x.Username.Contains(requestSearch.Username));
-            }
-            
+
             return query.CountAsync();
         }
         catch (Exception e)

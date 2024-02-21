@@ -2,7 +2,7 @@
 
 namespace BusinessObjects.Dtos.Response;
 
-public class UserListResponse
+public class UserListResponseDto
 {
     public Guid UserId { get; set; }
     public string Username { get; set; }
@@ -13,4 +13,5 @@ public class UserListResponse
     public DateTime DateOfBirth { get; set; }
     public string CitizenId { get; set; }
     public string Role { get; set; }
+    public string PhoneNumber { get; set; }
 }

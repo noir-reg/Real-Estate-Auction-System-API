@@ -12,6 +12,11 @@ public class BidRepository : IBidRepository
         _context = new RealEstateDbContext();
     }
 
+    public IQueryable<Bid> GetBidQuery()
+    {
+        return _context.Bids.AsQueryable();
+    }
+
     public Task AddBidAsync(Bid bid)
     {
         try

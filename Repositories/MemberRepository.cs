@@ -97,16 +97,12 @@ public class MemberRepository : IMemberRepository
         {
             var query = _context.Members.AsQueryable();
 
-            if (request == null)
-            {
-                return query.CountAsync();
-            }
-            
+            if (request == null) return query.CountAsync();
+
             if (!string.IsNullOrEmpty(request.Username))
                 query = query.Where(x => x.Username.Contains(request.Username));
-            
-          
-            
+
+
             return query.CountAsync();
         }
         catch (Exception e)

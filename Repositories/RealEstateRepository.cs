@@ -12,19 +12,6 @@ public class RealEstateRepository : IRealEstateRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task<List<RealEstate>> GetRealEstates()
-    {
-        try
-        {
-            var result = _context.RealEstates.ToListAsync();
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
     public Task<RealEstate?> GetRealEstate(Guid realEstateId)
     {
         try
@@ -70,6 +57,24 @@ public class RealEstateRepository : IRealEstateRepository
         {
             _context.RealEstates.Remove(realEstate);
             return _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public IQueryable<RealEstate> GetRealEstatesQuery()
+    {
+        return _context.RealEstates.AsQueryable();
+    }
+
+    public Task<List<RealEstate>> GetRealEstates()
+    {
+        try
+        {
+            var result = _context.RealEstates.ToListAsync();
+            return result;
         }
         catch (Exception e)
         {

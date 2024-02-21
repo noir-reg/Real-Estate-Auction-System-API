@@ -30,7 +30,7 @@ public class TokenController : ControllerBase
         var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
         var userName = principal.Identity.Name;
 
-        var user = await _userRepository.GetUser(e => e.Username == userName);
+        var user = await _userRepository.GetUserAsync(e => e.Username == userName);
 
         if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             return Unauthorized("Invalid client request");
@@ -62,7 +62,7 @@ public class TokenController : ControllerBase
     {
         var username = User.Identity.Name;
 
-        var user = await _userRepository.GetUser(e => e.Username == username);
+        var user = await _userRepository.GetUserAsync(e => e.Username == username);
         if (user is null) return BadRequest();
 
         user.RefreshToken = null;

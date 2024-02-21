@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Entities;
+﻿using System.Linq.Expressions;
+using BusinessObjects.Dtos.Request;
+using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repositories;
@@ -10,6 +12,42 @@ public class AdminRepository : IAdminRepository
     public AdminRepository()
     {
         _context = new RealEstateDbContext();
+    }
+
+    public IQueryable<Admin> GetAdminQuery()
+    {
+        return _context.Admins.AsQueryable();
+    }
+
+    public Task<int> GetAdminCountAsync(SearchAdminQuery? requestSearch)
+    {
+        try
+        {
+            var query = _context.Admins.AsQueryable();
+            if (requestSearch == null) return query.CountAsync();
+
+            if (!string.IsNullOrEmpty(requestSearch.Username))
+                query = query.Where(x => x.Username.Contains(requestSearch.Username));
+
+            return query.CountAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task<Admin?> GetAdminAsync(Expression<Func<Admin, bool>> predicate)
+    {
+        try
+        {
+            var result = _context.Admins.Where(predicate).FirstOrDefaultAsync();
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
     public Task AddAdminAsync(Admin admin)
