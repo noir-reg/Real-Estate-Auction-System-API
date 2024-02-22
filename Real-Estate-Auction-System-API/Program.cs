@@ -68,6 +68,21 @@ public class Program
                 IssuerSigningKey =
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
             };
+            options.Events = new JwtBearerEvents()
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    context.Token = accessToken;
+                    Console.WriteLine($"Received access_token: {context.Token}");
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {   // Log information about the validated token
+                    Console.WriteLine("Token validated successfully!");
+                    return Task.CompletedTask;
+                },
+            };
         });
         builder.Services.AddCors(options
             => options.AddDefaultPolicy(policy
@@ -77,7 +92,7 @@ public class Program
         // Configure the HTTP request pipeline.
 
         app.MapHub<ChatHub>("chat-hub");
-      
+
         app.UseSwagger();
         app.UseSwaggerUI();
 
