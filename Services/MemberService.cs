@@ -82,11 +82,21 @@ public class MemberService : IMemberService
     }
 
 
-    public async Task UpdateMemberAsync(Guid id, UpdateMemberRequestDto updateMemberRequestDto)
+    public async Task<ResultResponse<UpdateMemberResponseDto>> UpdateMemberAsync(Guid id,
+        UpdateMemberRequestDto updateMemberRequestDto)
     {
         var toBeUpdated = await _memberRepository.GetMemberAsync(x => x.UserId == id);
 
-        if (toBeUpdated == null) throw new Exception("Member not found");
+        if (toBeUpdated == null)
+        {
+            var failedResult = new ResultResponse<UpdateMemberResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { "Member not found" }
+            };
+
+            return failedResult;
+        }
 
         toBeUpdated.Username = updateMemberRequestDto.Username ?? toBeUpdated.Username;
         toBeUpdated.Email = updateMemberRequestDto.Email ?? toBeUpdated.Email;
@@ -94,8 +104,30 @@ public class MemberService : IMemberService
         toBeUpdated.LastName = updateMemberRequestDto.LastName ?? toBeUpdated.LastName;
         toBeUpdated.PhoneNumber = updateMemberRequestDto.PhoneNumber ?? toBeUpdated.PhoneNumber;
         toBeUpdated.DateOfBirth = updateMemberRequestDto.DateOfBirth ?? toBeUpdated.DateOfBirth;
+        toBeUpdated.Gender = updateMemberRequestDto.Gender ?? toBeUpdated.Gender;
 
         await _memberRepository.UpdateMemberAsync(toBeUpdated);
+
+        var updatedMember = await _memberRepository.GetMemberAsync(x => x.UserId == id);
+        var data = new UpdateMemberResponseDto
+        {
+            MemberId = updatedMember.UserId,
+            Username = updatedMember.Username,
+            Email = updatedMember.Email,
+            FirstName = updatedMember.FirstName,
+            LastName = updatedMember.LastName,
+            PhoneNumber = updatedMember.PhoneNumber,
+            DateOfBirth = updatedMember.DateOfBirth
+        };
+
+        var successResult = new ResultResponse<UpdateMemberResponseDto>()
+        {
+            IsSuccess = true,
+            Data = data,
+            Messages = new[] { "Member updated successfully" }
+        };
+
+        return successResult;
     }
 
     public async Task DeleteMemberAsync(Guid id)

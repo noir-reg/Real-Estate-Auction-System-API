@@ -8,6 +8,6 @@ public interface IMemberService
 {
     Task<Member?> LoginAsync(string username, string password);
     Task<ListResponseBaseDto<MemberListResponseDto>> GetMembersAsync(MemberQuery request);
-    Task UpdateMemberAsync(Guid id, UpdateMemberRequestDto updateMemberRequestDto);
+    Task<ResultResponse<UpdateMemberResponseDto>> UpdateMemberAsync(Guid id, UpdateMemberRequestDto updateMemberRequestDto);
     Task DeleteMemberAsync(Guid id);
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BusinessObjects.Enums;
 
 namespace BusinessObjects.Dtos.Request;
 
@@ -16,4 +17,5 @@ public class UpdateMemberRequestDto
     public string? PhoneNumber { get; set; }
 
     public DateTime? DateOfBirth { get; set; }
+    public Gender? Gender { get; set; }
 }

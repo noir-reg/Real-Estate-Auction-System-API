@@ -25,6 +25,8 @@ public class Program
         });
         builder.Services.AddRepositories();
         builder.Services.AddServices();
+        builder.Services.AddDbContext<RealEstateDbContext>(optionsBuilder =>
+            optionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
