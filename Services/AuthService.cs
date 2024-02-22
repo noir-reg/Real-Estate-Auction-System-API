@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Repositories;
 
@@ -42,7 +43,7 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task Register(RegisterMemberRequestDto dto)
+    public async Task<ResultResponse<RegisterMemberResponseDto>> Register(RegisterMemberRequestDto dto)
     {
         try
         {
@@ -62,8 +63,40 @@ public class AuthService : IAuthService
             var email = dto.Email;
 
             var result = await _memberRepository.GetMemberAsync(x => x.Email == email);
-            if (result != null) throw new Exception("User already exists");
+            if (result != null)
+            {
+                var failedResult = new ResultResponse<RegisterMemberResponseDto>()
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Email already exists" }
+                };
+                return failedResult;
+            }
+
+
             await _memberRepository.AddMemberAsync(member);
+            
+            var newMember = await _memberRepository.GetMemberAsync(x => x.Email == email);
+            var data = new RegisterMemberResponseDto()
+            {
+                MemberId = newMember.UserId,
+                Email = newMember.Email,
+                Username = newMember.Username,
+                FirstName = newMember.FirstName,
+                LastName = newMember.LastName,
+                Gender = newMember.Gender,
+                DateOfBirth = newMember.DateOfBirth,
+                CitizenId = newMember.CitizenId,
+                PhoneNumber = newMember.PhoneNumber
+            };
+
+            var successResult = new ResultResponse<RegisterMemberResponseDto>()
+            {
+                IsSuccess = true,
+                Data = data,
+                Messages = new[] { "Register success" }
+            };
+            return successResult;
         }
         catch (Exception e)
         {
