@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+
 using Repositories;
 using Services;
 
@@ -30,5 +31,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRealEstateOwnerRepository, RealEstateOwnerRepository>();
         services.AddScoped<ILegalDocumentRepository, LegalDocumentRepository>();
         services.AddScoped<IStaffRepository, StaffRepository>();
+        
     }
+  
 }

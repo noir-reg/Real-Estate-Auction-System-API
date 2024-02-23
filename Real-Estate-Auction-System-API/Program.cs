@@ -25,6 +25,7 @@ public class Program
         });
         builder.Services.AddRepositories();
         builder.Services.AddServices();
+        builder.Services.AddScoped<IChatHub, ChatHub>();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
@@ -92,7 +93,6 @@ public class Program
         // Configure the HTTP request pipeline.
 
         app.MapHub<ChatHub>("chat-hub");
-
         app.UseSwagger();
         app.UseSwaggerUI();
 
