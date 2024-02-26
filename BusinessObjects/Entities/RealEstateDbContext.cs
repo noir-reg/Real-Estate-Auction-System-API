@@ -61,7 +61,8 @@ public class RealEstateDbContext : DbContext
                 {
                     e.CitizenId,
                     e.Email,
-                    e.Username
+                    e.Username,
+                    e.PhoneNumber
                 }).IsUnique()
                 ;
             builder.HasDiscriminator(e => e.Role).HasValue<Admin>("Admin").HasValue<Member>("Member")
