@@ -39,7 +39,7 @@ public class MemberController : ControllerBase
 
         var result = await _memberService.UpdateMemberAsync(id, request);
 
-        if (!result.IsSuccess)
+        if (result.Status == Status.NotFound)
         {
             return NotFound(result);
         }
@@ -55,7 +55,7 @@ public class MemberController : ControllerBase
         var result = await _memberService.DeleteMemberAsync(id);
 
 
-        if (!result.IsSuccess)
+        if (result.Status == Status.NotFound)
         {
             return NotFound(result);
         }
@@ -72,7 +72,7 @@ public class MemberController : ControllerBase
     {
         var result = await _memberService.GetMemberAsync(id);
         
-        if (!result.IsSuccess)
+        if (result.Status == Status.NotFound)
         {
             return NotFound(result);
         }

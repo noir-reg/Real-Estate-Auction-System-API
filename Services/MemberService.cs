@@ -80,7 +80,8 @@ public class MemberService : IMemberService
             var failedResult = new ResultResponse<UpdateMemberResponseDto>()
             {
                 IsSuccess = false,
-                Messages = new[] { "Member not found" }
+                Messages = new[] { "Member not found" },
+                Status = Status.NotFound
             };
 
             return failedResult;
@@ -128,7 +129,8 @@ public class MemberService : IMemberService
                 var failedResult = new ResultResponse<DeleteMemberResponseDto>()
                 {
                     IsSuccess = false,
-                    Messages = new[] { "Member not found" }
+                    Messages = new[] { "Member not found" },
+                    Status = Status.NotFound
                 };
                 return failedResult;
             }
@@ -173,11 +175,12 @@ public class MemberService : IMemberService
                 var failedResult = new ResultResponse<MemberDetailResponseDto>()
                 {
                     IsSuccess = false,
-                    Messages = new[] { "Member not found" }
+                    Messages = new[] { "Member not found" },
+                    Status = Status.NotFound
                 };
                 return failedResult;
             }
-            
+
             var result = new MemberDetailResponseDto
             {
                 MemberId = data.UserId,
@@ -190,16 +193,15 @@ public class MemberService : IMemberService
                 Gender = data.Gender,
                 CitizenId = data.CitizenId
             };
-            
+
             var successResult = new ResultResponse<MemberDetailResponseDto>()
             {
                 IsSuccess = true,
                 Data = result,
                 Messages = new[] { "Member found successfully" }
             };
-            
+
             return successResult;
-            
         }
         catch (Exception e)
         {

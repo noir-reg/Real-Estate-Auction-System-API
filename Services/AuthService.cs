@@ -69,6 +69,7 @@ public class AuthService : IAuthService
                 {
                     IsSuccess = false,
                     Messages = new[] { "Email already exists" }
+                    ,Status = Status.Duplicate
                 };
                 return failedResult;
             }
