@@ -8,7 +8,7 @@ namespace BusinessObjects.Dtos.Request
 {
     public class SendToGroupDto
     {
-        public string SenderId { get; set; }
+        
         public string GroupId { get; set; }
         public string SenderName { get; set; }
         public string Message { get; set;}
