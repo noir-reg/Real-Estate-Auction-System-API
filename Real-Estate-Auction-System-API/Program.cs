@@ -92,7 +92,10 @@ public class Program
 
         // Configure the HTTP request pipeline.
 
-        app.MapHub<ChatHub>("chat-hub");
+        app.MapHub<ChatHub>("chat-hub", options =>
+        {
+            options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
+        });
         app.UseSwagger();
         app.UseSwaggerUI();
 
