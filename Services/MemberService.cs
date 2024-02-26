@@ -111,7 +111,8 @@ public class MemberService : IMemberService
         {
             IsSuccess = true,
             Data = data,
-            Messages = new[] { "Member updated successfully" }
+            Messages = new[] { "Member updated successfully" },
+            Status = Status.Ok
         };
 
         return successResult;
@@ -150,7 +151,8 @@ public class MemberService : IMemberService
             {
                 IsSuccess = true,
                 Data = data,
-                Messages = new[] { "Member deleted successfully" }
+                Messages = new[] { "Member deleted successfully" },
+                Status = Status.Ok
             };
 
             await _memberRepository.DeleteMemberAsync(toBeDeleted);
@@ -197,7 +199,8 @@ public class MemberService : IMemberService
             {
                 IsSuccess = true,
                 Data = result,
-                Messages = new[] { "Member found successfully" }
+                Messages = new[] { "Member found successfully" },
+                Status = Status.Ok
             };
 
             return successResult;
