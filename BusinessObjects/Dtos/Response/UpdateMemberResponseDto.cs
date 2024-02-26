@@ -4,7 +4,6 @@ namespace BusinessObjects.Dtos.Response;
 
 public class UpdateMemberResponseDto
 {
-    
     public Guid MemberId { get; set; }
     public string CitizenId { get; set; }
     public DateTime DateOfBirth { get; set; }

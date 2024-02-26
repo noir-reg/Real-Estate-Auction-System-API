@@ -2,7 +2,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -79,7 +78,7 @@ public class Program
         // Configure the HTTP request pipeline.
 
         app.MapHub<ChatHub>("chat-hub");
-      
+
         app.UseSwagger();
         app.UseSwaggerUI();
 

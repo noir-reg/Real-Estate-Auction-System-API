@@ -1,6 +1,5 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
-using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 
@@ -77,7 +76,7 @@ public class MemberService : IMemberService
 
         if (toBeUpdated == null)
         {
-            var failedResult = new ResultResponse<UpdateMemberResponseDto>()
+            var failedResult = new ResultResponse<UpdateMemberResponseDto>
             {
                 IsSuccess = false,
                 Messages = new[] { "Member not found" },
@@ -108,7 +107,7 @@ public class MemberService : IMemberService
             DateOfBirth = toBeUpdated.DateOfBirth
         };
 
-        var successResult = new ResultResponse<UpdateMemberResponseDto>()
+        var successResult = new ResultResponse<UpdateMemberResponseDto>
         {
             IsSuccess = true,
             Data = data,
@@ -126,7 +125,7 @@ public class MemberService : IMemberService
 
             if (toBeDeleted == null)
             {
-                var failedResult = new ResultResponse<DeleteMemberResponseDto>()
+                var failedResult = new ResultResponse<DeleteMemberResponseDto>
                 {
                     IsSuccess = false,
                     Messages = new[] { "Member not found" },
@@ -147,7 +146,7 @@ public class MemberService : IMemberService
                 Gender = toBeDeleted.Gender,
                 CitizenId = toBeDeleted.CitizenId
             };
-            var successResult = new ResultResponse<DeleteMemberResponseDto>()
+            var successResult = new ResultResponse<DeleteMemberResponseDto>
             {
                 IsSuccess = true,
                 Data = data,
@@ -172,7 +171,7 @@ public class MemberService : IMemberService
 
             if (data == null)
             {
-                var failedResult = new ResultResponse<MemberDetailResponseDto>()
+                var failedResult = new ResultResponse<MemberDetailResponseDto>
                 {
                     IsSuccess = false,
                     Messages = new[] { "Member not found" },
@@ -194,7 +193,7 @@ public class MemberService : IMemberService
                 CitizenId = data.CitizenId
             };
 
-            var successResult = new ResultResponse<MemberDetailResponseDto>()
+            var successResult = new ResultResponse<MemberDetailResponseDto>
             {
                 IsSuccess = true,
                 Data = result,

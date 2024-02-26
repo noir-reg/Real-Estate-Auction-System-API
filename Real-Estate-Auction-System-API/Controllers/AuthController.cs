@@ -62,10 +62,7 @@ public class AuthController : ControllerBase
 
         var result = await _authService.Register(request);
 
-        if (result.Status == Status.Duplicate)
-        {
-            return Conflict(result);
-        }
+        if (result.Status == Status.Duplicate) return Conflict(result);
 
         return Ok(result);
     }

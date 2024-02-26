@@ -1,7 +1,6 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 using Repositories;
 
@@ -65,20 +64,19 @@ public class AuthService : IAuthService
             var result = await _memberRepository.GetMemberAsync(x => x.Email == email);
             if (result != null)
             {
-                var failedResult = new ResultResponse<RegisterMemberResponseDto>()
+                var failedResult = new ResultResponse<RegisterMemberResponseDto>
                 {
                     IsSuccess = false,
-                    Messages = new[] { "Email already exists" }
-                    ,Status = Status.Duplicate
+                    Messages = new[] { "Email already exists" }, Status = Status.Duplicate
                 };
                 return failedResult;
             }
 
 
             await _memberRepository.AddMemberAsync(member);
-            
+
             var newMember = await _memberRepository.GetMemberAsync(x => x.Email == email);
-            var data = new RegisterMemberResponseDto()
+            var data = new RegisterMemberResponseDto
             {
                 MemberId = newMember.UserId,
                 Email = newMember.Email,
@@ -91,7 +89,7 @@ public class AuthService : IAuthService
                 PhoneNumber = newMember.PhoneNumber
             };
 
-            var successResult = new ResultResponse<RegisterMemberResponseDto>()
+            var successResult = new ResultResponse<RegisterMemberResponseDto>
             {
                 IsSuccess = true,
                 Data = data,
