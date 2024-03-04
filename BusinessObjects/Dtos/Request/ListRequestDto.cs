@@ -111,3 +111,15 @@ public class SearchUserQuery
 {
     public string? Username { get; set; }
 }
+
+public class LegalDocumentQuery : BaseQueryDto
+{
+    public LegalDocumentSortBy SortBy { get; set; } = LegalDocumentSortBy.FileName;
+    public string FileName { get; set; } = "";
+    public OrderDirection OrderDirection { get; set; }
+}
+
+public enum LegalDocumentSortBy
+{
+    FileName
+}
