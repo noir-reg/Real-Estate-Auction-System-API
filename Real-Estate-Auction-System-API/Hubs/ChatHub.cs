@@ -9,8 +9,9 @@ using NuGet.Protocol.Plugins;
 using System.Text.RegularExpressions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace Real_Estate_Auction_System_API.Hubs
-{
+namespace Real_Estate_Auction_System_API.Hubs;
+
+
    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub, IChatHub
     {
@@ -77,4 +78,3 @@ namespace Real_Estate_Auction_System_API.Hubs
 
 
     }
-}

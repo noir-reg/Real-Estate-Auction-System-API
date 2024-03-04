@@ -1,6 +1,5 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
-using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 
@@ -15,18 +14,6 @@ public class MemberService : IMemberService
         _memberRepository = memberRepository;
     }
 
-    public Task<Member?> LoginAsync(string username, string password)
-    {
-        try
-        {
-            var result = _memberRepository.GetMemberAsync(x => x.Username == username && x.Password == password);
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
 
     public async Task<ListResponseBaseDto<MemberListResponseDto>> GetMembersAsync(MemberQuery request)
     {
@@ -60,7 +47,7 @@ public class MemberService : IMemberService
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     PhoneNumber = x.PhoneNumber,
-                    DateOfBirth = x.DateOfBirth
+                    DateOfBirth = x.DateOfBirth.ToShortDateString()
                 })
                 .ToListAsync();
 
@@ -82,11 +69,22 @@ public class MemberService : IMemberService
     }
 
 
-    public async Task UpdateMemberAsync(Guid id, UpdateMemberRequestDto updateMemberRequestDto)
+    public async Task<ResultResponse<UpdateMemberResponseDto>> UpdateMemberAsync(Guid id,
+        UpdateMemberRequestDto updateMemberRequestDto)
     {
         var toBeUpdated = await _memberRepository.GetMemberAsync(x => x.UserId == id);
 
-        if (toBeUpdated == null) throw new Exception("Member not found");
+        if (toBeUpdated == null)
+        {
+            var failedResult = new ResultResponse<UpdateMemberResponseDto>
+            {
+                IsSuccess = false,
+                Messages = new[] { "Member not found" },
+                Status = Status.NotFound
+            };
+
+            return failedResult;
+        }
 
         toBeUpdated.Username = updateMemberRequestDto.Username ?? toBeUpdated.Username;
         toBeUpdated.Email = updateMemberRequestDto.Email ?? toBeUpdated.Email;
@@ -94,19 +92,118 @@ public class MemberService : IMemberService
         toBeUpdated.LastName = updateMemberRequestDto.LastName ?? toBeUpdated.LastName;
         toBeUpdated.PhoneNumber = updateMemberRequestDto.PhoneNumber ?? toBeUpdated.PhoneNumber;
         toBeUpdated.DateOfBirth = updateMemberRequestDto.DateOfBirth ?? toBeUpdated.DateOfBirth;
+        toBeUpdated.Gender = updateMemberRequestDto.Gender ?? toBeUpdated.Gender;
 
         await _memberRepository.UpdateMemberAsync(toBeUpdated);
+
+        var data = new UpdateMemberResponseDto
+        {
+            MemberId = toBeUpdated.UserId,
+            Username = toBeUpdated.Username,
+            Email = toBeUpdated.Email,
+            FirstName = toBeUpdated.FirstName,
+            LastName = toBeUpdated.LastName,
+            PhoneNumber = toBeUpdated.PhoneNumber,
+            DateOfBirth = toBeUpdated.DateOfBirth
+        };
+
+        var successResult = new ResultResponse<UpdateMemberResponseDto>
+        {
+            IsSuccess = true,
+            Data = data,
+            Messages = new[] { "Member updated successfully" },
+            Status = Status.Ok
+        };
+
+        return successResult;
     }
 
-    public async Task DeleteMemberAsync(Guid id)
+    public async Task<ResultResponse<DeleteMemberResponseDto>> DeleteMemberAsync(Guid id)
     {
         try
         {
             var toBeDeleted = await _memberRepository.GetMemberAsync(x => x.UserId == id);
 
-            if (toBeDeleted == null) throw new Exception("Member not found");
+            if (toBeDeleted == null)
+            {
+                var failedResult = new ResultResponse<DeleteMemberResponseDto>
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Member not found" },
+                    Status = Status.NotFound
+                };
+                return failedResult;
+            }
+
+            var data = new DeleteMemberResponseDto
+            {
+                MemberId = toBeDeleted.UserId,
+                Username = toBeDeleted.Username,
+                Email = toBeDeleted.Email,
+                FirstName = toBeDeleted.FirstName,
+                LastName = toBeDeleted.LastName,
+                PhoneNumber = toBeDeleted.PhoneNumber,
+                DateOfBirth = toBeDeleted.DateOfBirth,
+                Gender = toBeDeleted.Gender,
+                CitizenId = toBeDeleted.CitizenId
+            };
+            var successResult = new ResultResponse<DeleteMemberResponseDto>
+            {
+                IsSuccess = true,
+                Data = data,
+                Messages = new[] { "Member deleted successfully" },
+                Status = Status.Ok
+            };
 
             await _memberRepository.DeleteMemberAsync(toBeDeleted);
+
+            return successResult;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<ResultResponse<MemberDetailResponseDto>> GetMemberAsync(Guid id)
+    {
+        try
+        {
+            var data = await _memberRepository.GetMemberAsync(x => x.UserId == id);
+
+            if (data == null)
+            {
+                var failedResult = new ResultResponse<MemberDetailResponseDto>
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Member not found" },
+                    Status = Status.NotFound
+                };
+                return failedResult;
+            }
+
+            var result = new MemberDetailResponseDto
+            {
+                MemberId = data.UserId,
+                Username = data.Username,
+                Email = data.Email,
+                FirstName = data.FirstName,
+                LastName = data.LastName,
+                PhoneNumber = data.PhoneNumber,
+                DateOfBirth = data.DateOfBirth,
+                Gender = data.Gender,
+                CitizenId = data.CitizenId
+            };
+
+            var successResult = new ResultResponse<MemberDetailResponseDto>
+            {
+                IsSuccess = true,
+                Data = result,
+                Messages = new[] { "Member found successfully" },
+                Status = Status.Ok
+            };
+
+            return successResult;
         }
         catch (Exception e)
         {

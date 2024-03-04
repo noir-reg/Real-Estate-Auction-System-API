@@ -45,7 +45,7 @@ public class AdminService : IAdminService
                 Username = x.Username,
                 Email = x.Email,
                 CitizenId = x.CitizenId,
-                DateOfBirth = x.DateOfBirth,
+                DateOfBirth = x.DateOfBirth.Date.ToString("yyyy-MM-d"),
                 Gender = x.Gender,
                 PhoneNumber = x.PhoneNumber,
                 FirstName = x.FirstName,

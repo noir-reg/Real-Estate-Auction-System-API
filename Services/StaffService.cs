@@ -56,29 +56,87 @@ public class StaffService : IStaffService
         return result;
     }
 
-    public Task AddStaffAsync(AddStaffRequestDto request)
+    public async Task<ResultResponse<AddStaffResponseDto>> AddStaffAsync(AddStaffRequestDto request)
     {
-        var toBeAdded = new Staff
+        try
         {
-            Username = request.Username,
-            Email = request.Email,
-            Password = request.Password,
-            CitizenId = request.CitizenId,
-            DateOfBirth = request.DateOfBirth,
-            Gender = request.Gender,
-            PhoneNumber = request.PhoneNumber,
-            FirstName = request.FirstName,
-            LastName = request.LastName
-        };
+            var staff = await _staffRepository.GetStaffAsync(x =>
+                x.Email == request.Email || x.CitizenId == request.CitizenId || x.PhoneNumber == request.PhoneNumber ||
+                x.Username == request.Username);
 
-        return _staffRepository.AddStaffAsync(toBeAdded);
+            if (staff != null)
+            {
+                var duplicatedResponse = new ResultResponse<AddStaffResponseDto>
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Staff already exists" },
+                    Status = Status.Duplicate
+                };
+                return duplicatedResponse;
+            }
+
+
+            var toBeAdded = new Staff
+            {
+                Username = request.Username,
+                Email = request.Email,
+                Password = request.Password,
+                CitizenId = request.CitizenId,
+                DateOfBirth = request.DateOfBirth,
+                Gender = request.Gender,
+                PhoneNumber = request.PhoneNumber,
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            };
+
+
+            await _staffRepository.AddStaffAsync(toBeAdded);
+
+            var addedStaff = await _staffRepository.GetStaffAsync(x => x.Email == request.Email);
+
+            var data = new AddStaffResponseDto()
+            {
+                StaffId = addedStaff.UserId,
+                Username = addedStaff.Username,
+                Email = addedStaff.Email,
+                FirstName = addedStaff.FirstName,
+                LastName = addedStaff.LastName,
+                PhoneNumber = addedStaff.PhoneNumber,
+                DateOfBirth = addedStaff.DateOfBirth,
+                Gender = addedStaff.Gender,
+                CitizenId = addedStaff.CitizenId
+            };
+
+            var successResponse = new ResultResponse<AddStaffResponseDto>
+            {
+                IsSuccess = true,
+                Messages = new[] { "Staff added successfully" },
+                Status = Status.Ok,
+                Data = data
+            };
+            return successResponse;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task UpdateStaffAsync(Guid id, UpdateStaffRequestDto request)
+    public async Task<ResultResponse<UpdateStaffResponseDto>> UpdateStaffAsync(Guid id, UpdateStaffRequestDto request)
     {
         var toBeUpdated = await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
-        if (toBeUpdated is null) throw new Exception("Staff not found");
+        if (toBeUpdated is null)
+        {
+            var failedResult = new ResultResponse<UpdateStaffResponseDto>
+            {
+                IsSuccess = false,
+                Messages = new[] { "Staff not found" },
+                Status = Status.NotFound
+            };
+            return failedResult;
+        }
+
 
         toBeUpdated.Username = request.Username ?? toBeUpdated.Username;
         toBeUpdated.Email = request.Email ?? toBeUpdated.Email;
@@ -90,22 +148,76 @@ public class StaffService : IStaffService
         toBeUpdated.LastName = request.LastName ?? toBeUpdated.LastName;
 
         await _staffRepository.UpdateStaffAsync(toBeUpdated);
+
+        var data = new UpdateStaffResponseDto
+        {
+            StaffId = toBeUpdated.UserId,
+            Username = toBeUpdated.Username,
+            Email = toBeUpdated.Email,
+            FirstName = toBeUpdated.FirstName,
+            LastName = toBeUpdated.LastName,
+            PhoneNumber = toBeUpdated.PhoneNumber,
+            DateOfBirth = toBeUpdated.DateOfBirth,
+            Gender = toBeUpdated.Gender,
+            CitizenId = toBeUpdated.CitizenId
+        };
+
+        var successResult = new ResultResponse<UpdateStaffResponseDto>
+        {
+            IsSuccess = true,
+            Messages = new[] { "Staff updated successfully" },
+            Status = Status.Ok,
+            Data = data
+        };
+        return successResult;
     }
 
-    public Task<StaffDetailResponseDto?> GetStaffAsync(Expression<Func<Staff, bool>> predicate)
+    public async Task<ResultResponse<StaffDetailResponseDto>> GetStaffAsync(Guid id)
     {
-        var query = _staffRepository.GetStaffQuery();
-
-        query = query.Where(predicate);
-
-        var result = query.Select(x => new StaffDetailResponseDto
+        try
         {
-            UserId = x.UserId,
-            Username = x.Username,
-            Email = x.Email
-        }).SingleOrDefaultAsync();
+            var staff= await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
-        return result;
+            if (staff == null)
+            {
+                var failedResult = new ResultResponse<StaffDetailResponseDto>
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Staff not found" },
+                    Status = Status.NotFound
+                };
+                return failedResult;
+            }
+            
+            var data = new StaffDetailResponseDto
+            {
+                UserId = staff.UserId,
+                Username = staff.Username,
+                Email = staff.Email,
+                FirstName = staff.FirstName,
+                LastName = staff.LastName,
+                PhoneNumber = staff.PhoneNumber,
+                DateOfBirth = staff.DateOfBirth,
+                Gender = staff.Gender,
+                CitizenId = staff.CitizenId
+            }
+                ;
+            
+
+            var successResult = new ResultResponse<StaffDetailResponseDto>
+            {
+                IsSuccess = true,
+                Messages = new[] { "Staff found successfully" },
+                Status = Status.Ok,
+                Data = data
+            };
+            return successResult;
+                    
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
     public async Task DeleteStaffAsync(Guid id)

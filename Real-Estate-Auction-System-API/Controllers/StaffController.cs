@@ -26,11 +26,11 @@ public class StaffController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<StaffDetailResponseDto>> GetDetail([FromRoute] Guid id)
+    public async Task<ActionResult<ResultResponse<StaffDetailResponseDto>>> GetDetail([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var data = await _staffService.GetStaffAsync(x => x.UserId == id);
+        var data = await _staffService.GetStaffAsync(id);
         return Ok(data);
     }
 

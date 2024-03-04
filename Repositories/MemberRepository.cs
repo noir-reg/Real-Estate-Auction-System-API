@@ -27,7 +27,7 @@ public class MemberRepository : IMemberRepository
                 FirstName = e.FirstName,
                 LastName = e.LastName,
                 Gender = e.Gender,
-                DateOfBirth = e.DateOfBirth,
+                DateOfBirth = e.DateOfBirth.ToShortDateString(),
                 CitizenId = e.CitizenId
             }).ToListAsync();
             return result;

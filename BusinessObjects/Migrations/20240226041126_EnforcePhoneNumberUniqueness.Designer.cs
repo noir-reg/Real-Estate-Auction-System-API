@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240226041126_EnforcePhoneNumberUniqueness")]
+    partial class EnforcePhoneNumberUniqueness
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,13 +192,13 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FileName")
+                    b.Property<Guid>("RealEstateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("RealEstateId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("DocumentId");
 

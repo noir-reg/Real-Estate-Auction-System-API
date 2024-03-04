@@ -8,8 +8,8 @@ namespace Services;
 public interface IStaffService
 {
     Task<ListResponseBaseDto<StaffListResponseDto>> GetStaffsAsync(StaffQuery request);
-    Task AddStaffAsync(AddStaffRequestDto request);
-    Task UpdateStaffAsync(Guid id, UpdateStaffRequestDto request);
-    Task<StaffDetailResponseDto?> GetStaffAsync(Expression<Func<Staff, bool>> predicate);
+    Task<ResultResponse<AddStaffResponseDto>> AddStaffAsync(AddStaffRequestDto request);
+    Task<ResultResponse<UpdateStaffResponseDto>> UpdateStaffAsync(Guid id, UpdateStaffRequestDto request);
+    Task<ResultResponse<StaffDetailResponseDto>> GetStaffAsync(Guid id);
     Task DeleteStaffAsync(Guid id);
 }

@@ -40,7 +40,7 @@ public class UserService : IUserService
             Role = x.Role,
             UserId = x.UserId,
             Gender = x.Gender,
-            DateOfBirth = x.DateOfBirth,
+            DateOfBirth = x.DateOfBirth.ToShortDateString(),
             CitizenId = x.CitizenId,
             FirstName = x.FirstName,
             LastName = x.LastName,

@@ -16,6 +16,9 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IStaffService, StaffService>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
+        services.AddScoped<ILegalDocumentService, LegalDocumentService>();
+        services.AddScoped<IRealEstateService, RealEstateService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)

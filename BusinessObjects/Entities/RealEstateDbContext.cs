@@ -40,7 +40,7 @@ public class RealEstateDbContext : DbContext
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
 
-        return config.GetConnectionString("DefaultConnection");
+        return config.GetConnectionString("LocalConnection");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,7 +61,8 @@ public class RealEstateDbContext : DbContext
                 {
                     e.CitizenId,
                     e.Email,
-                    e.Username
+                    e.Username,
+                    e.PhoneNumber
                 }).IsUnique()
                 ;
             builder.HasDiscriminator(e => e.Role).HasValue<Admin>("Admin").HasValue<Member>("Member")
@@ -147,7 +148,7 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.DocumentId).ValueGeneratedOnAdd();
             builder.Property(e => e.DocumentUrl).HasColumnType("text");
             builder.Property(e => e.DocumentType).HasColumnType("nvarchar").HasMaxLength(30);
-            builder.Property(e => e.Title).HasColumnType("nvarchar").HasMaxLength(100);
+            builder.Property(e => e.FileName).HasColumnType("nvarchar").HasMaxLength(100);
             builder.HasOne(e => e.RealEstate).WithMany(e => e.LegalDocuments).HasForeignKey(e => e.RealEstateId);
         });
 
