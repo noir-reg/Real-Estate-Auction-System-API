@@ -40,7 +40,7 @@ public class RealEstateDbContext : DbContext
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
 
-        return config.GetConnectionString("LocalConnection");
+        return config.GetConnectionString("DefaultConnection");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
