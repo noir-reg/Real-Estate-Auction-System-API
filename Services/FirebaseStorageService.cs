@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using Microsoft.Extensions.Configuration;
 
 namespace Services;
 
@@ -7,10 +8,12 @@ public class FirebaseStorageService : IFirebaseStorageService
 {
     private readonly StorageClient _storageClient;
     private const string _bucketName = "real-estate-auction-a4998.appspot.com";
+    private readonly IConfiguration _configuration;
 
-    public FirebaseStorageService()
+    public FirebaseStorageService(IConfiguration configuration)
     {
-        _storageClient = StorageClient.Create(GoogleCredential.FromFile("D:\\SWD392\\real-estate-auction-a4998-807216049217.json"));
+        _configuration = configuration;
+        _storageClient = StorageClient.Create(credential: GoogleCredential.FromFile(_configuration["GOOGLE_APPLICATION_CREDENTIALS"]));
     }
 
     public async Task<string> UploadFileAsync(string filePath, string objectName, string contentType)
