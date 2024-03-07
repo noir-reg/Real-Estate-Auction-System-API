@@ -9,4 +9,5 @@ public interface IUserService
 {
     Task<ListResponseBaseDto<UserListResponseDto>> GetUsersAsync(UserQuery request);
     Task<UserDetailResponseDto?> GetUserAsync(Expression<Func<User, bool>> predicate);
+    Task ChangePasswordAsync(ChangePasswordRequestDto request);
 }
