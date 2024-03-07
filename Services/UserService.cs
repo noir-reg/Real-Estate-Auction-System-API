@@ -77,9 +77,4 @@ public class UserService : IUserService
 
         return result;
     }
-
-    public Task ChangePasswordAsync(ChangePasswordRequestDto request)
-    {
-        throw new NotImplementedException();
-    }
 }
