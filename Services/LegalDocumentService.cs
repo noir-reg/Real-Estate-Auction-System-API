@@ -72,7 +72,7 @@ public class LegalDocumentService : ILegalDocumentService
             return new ResultResponse<UploadDocumentsResponseDto>()
             {
                 Status = Status.Error,
-                Messages = new[] { e.Message },
+                Messages = new[] { e.Message,e.InnerException?.Message },
                 IsSuccess = false
             };
         }

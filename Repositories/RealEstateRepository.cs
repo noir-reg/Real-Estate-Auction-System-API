@@ -1,4 +1,7 @@
-﻿using BusinessObjects.Entities;
+﻿using System.Linq.Expressions;
+using BusinessObjects.Dtos.Request;
+using BusinessObjects.Dtos.Response;
+using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repositories;
@@ -12,11 +15,11 @@ public class RealEstateRepository : IRealEstateRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task<RealEstate?> GetRealEstate(Guid realEstateId)
+    public Task<RealEstate?> GetRealEstate(Expression<Func<RealEstate, bool>> predicate)
     {
         try
         {
-            var result = _context.RealEstates.Where(x => x.RealEstateId == realEstateId).SingleOrDefaultAsync();
+            var result = _context.RealEstates.SingleOrDefaultAsync(predicate);
             return result;
         }
         catch (Exception e)
@@ -25,25 +28,15 @@ public class RealEstateRepository : IRealEstateRepository
         }
     }
 
-    public Task AddRealEstateAsync(RealEstate realEstate)
-    {
-        try
-        {
-            _context.RealEstates.Add(realEstate);
-            return _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
 
-    public Task UpdateRealEstateAsync(RealEstate realEstate)
+    public async Task<RealEstate> UpdateRealEstateAsync(RealEstate realEstate)
     {
         try
         {
             _context.RealEstates.Update(realEstate);
-            return _context.SaveChangesAsync();
+             await _context.SaveChangesAsync();
+
+             return realEstate;
         }
         catch (Exception e)
         {
@@ -67,6 +60,43 @@ public class RealEstateRepository : IRealEstateRepository
     public IQueryable<RealEstate> GetRealEstatesQuery()
     {
         return _context.RealEstates.AsQueryable();
+    }
+
+    public async Task<RealEstate> AddRealEstateAsync(RealEstate realEstate)
+    {
+        try
+        {
+            _context.RealEstates.Add(realEstate);
+            await _context.SaveChangesAsync();
+
+            return realEstate;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task<int> GetCount(SearchRealEstateQuery? request)
+    {
+        try
+        {
+            var queryable = _context.RealEstates.AsQueryable();
+
+            if (request == null)
+            {
+                return queryable.CountAsync();
+            }
+
+
+            queryable = queryable.Where(x => x.RealEstateName.Contains(request.RealEstateName));
+
+            return queryable.CountAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
     public Task<List<RealEstate>> GetRealEstates()

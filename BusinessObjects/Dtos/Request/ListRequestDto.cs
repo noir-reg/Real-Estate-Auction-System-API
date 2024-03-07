@@ -119,6 +119,23 @@ public class LegalDocumentQuery : BaseQueryDto
     public OrderDirection OrderDirection { get; set; }
 }
 
+public class RealEstateQuery : BaseQueryDto
+{
+    public RealEstateSortBy SortBy { get; set; }
+    public OrderDirection OrderDirection { get; set; }
+    public SearchRealEstateQuery? Search { get; set; }
+}
+
+public enum RealEstateSortBy
+{
+    RealEstateName
+}
+
+public class SearchRealEstateQuery
+{
+    public string RealEstateName { get; set; } = "";
+}
+
 public enum LegalDocumentSortBy
 {
     FileName

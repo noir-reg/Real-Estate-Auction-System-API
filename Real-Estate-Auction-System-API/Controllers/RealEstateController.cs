@@ -19,9 +19,44 @@ public class RealEstateController : ControllerBase
    }
 
    [HttpGet]
-   public async Task<ListResponseBaseDto<GetRealEstatesResponseDto>> GetRealEstates()
+   public async Task<ActionResult<ListResponseBaseDto<GetRealEstatesResponseDto>>> GetRealEstates([FromQuery] RealEstateQuery request)
    {
-       throw new NotImplementedException();
+       var result = await _realEstateService.GetRealEstates(request);
+       return Ok(result);
+   }
+
+   [HttpPost]
+   public async Task<ActionResult<ResultResponse<CreateRealEstateResponseDto>>> CreateRealEstate(
+       CreateRealEstateRequestDto request)
+   {
+      ResultResponse<CreateRealEstateResponseDto> result = await _realEstateService.CreateRealEstate(request);
+      return Ok(result);
+   }
+   
+   [HttpPut("{id}")]
+   public async Task<ActionResult<ResultResponse<UpdateRealEstateResponseDto>>> UpdateRealEstate([FromRoute] Guid id, UpdateRealEstateRequestDto request)
+   {
+       ResultResponse<UpdateRealEstateResponseDto> result = await _realEstateService.UpdateRealEstate(id, request);
+
+       if (result.Status == Status.NotFound)
+       {
+           return NotFound(result);
+       }
+       
+       return Ok(result);
+   }
+
+   [HttpDelete("{id}")]
+   public async Task<ActionResult<ResultResponse<DeleteRealEstateResponseDto>>> DeleteRealEstate([FromRoute] Guid id)
+   {
+      ResultResponse<DeleteRealEstateResponseDto> result = await _realEstateService.DeleteRealEstate(id);
+
+      if (result.Status == Status.NotFound)
+      {
+          return NotFound(result);
+      }
+      
+      return Ok(result);
    }
 
    [HttpGet("{id}")]
