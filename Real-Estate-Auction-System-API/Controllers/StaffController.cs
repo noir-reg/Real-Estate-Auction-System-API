@@ -35,29 +35,35 @@ public class StaffController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] AddStaffRequestDto request)
+    public async Task<ActionResult<ResultResponse<AddStaffResponseDto>>> Create([FromBody] AddStaffRequestDto request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        await _staffService.AddStaffAsync(request);
-        return Ok("Create successfully");
+       var result = await _staffService.AddStaffAsync(request);
+        return Ok(result);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromBody] UpdateStaffRequestDto request, [FromRoute] Guid id)
+    public async Task<ActionResult<ResultResponse<UpdateStaffResponseDto>>> Update([FromBody] UpdateStaffRequestDto request, [FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+       var result = await _staffService.UpdateStaffAsync(id, request);
 
-        await _staffService.UpdateStaffAsync(id, request);
-        return Ok("Update successfully");
+       if (result.Status == Status.NotFound)
+       {
+           return NotFound(result);
+       }
+       
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    public async Task<ActionResult<ResultResponse<DeleteStaffResponseDto>>> Delete([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        await _staffService.DeleteStaffAsync(id);
-        return Ok("Delete successfully");
+        var result = await _staffService.DeleteStaffAsync(id);
+        if (result.Status != Status.NotFound) return NotFound(result);
+        return Ok(result);
     }
 }

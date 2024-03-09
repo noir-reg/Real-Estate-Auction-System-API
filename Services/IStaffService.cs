@@ -11,5 +11,5 @@ public interface IStaffService
     Task<ResultResponse<AddStaffResponseDto>> AddStaffAsync(AddStaffRequestDto request);
     Task<ResultResponse<UpdateStaffResponseDto>> UpdateStaffAsync(Guid id, UpdateStaffRequestDto request);
     Task<ResultResponse<StaffDetailResponseDto>> GetStaffAsync(Guid id);
-    Task DeleteStaffAsync(Guid id);
+    Task<ResultResponse<DeleteStaffResponseDto>> DeleteStaffAsync(Guid id);
 }

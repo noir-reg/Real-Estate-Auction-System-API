@@ -75,50 +75,65 @@ public class MemberService : IMemberService
     public async Task<ResultResponse<UpdateMemberResponseDto>> UpdateMemberAsync(Guid id,
         UpdateMemberRequestDto updateMemberRequestDto)
     {
-        var toBeUpdated = await _memberRepository.GetMemberAsync(x => x.UserId == id);
-
-        if (toBeUpdated == null)
+        try
         {
-            var failedResult = new ResultResponse<UpdateMemberResponseDto>
+            var toBeUpdated = await _memberRepository.GetMemberAsync(x => x.UserId == id);
+
+            if (toBeUpdated == null)
             {
-                IsSuccess = false,
-                Messages = new[] { "Member not found" },
-                Status = Status.NotFound
+                var failedResult = new ResultResponse<UpdateMemberResponseDto>
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Member not found" },
+                    Status = Status.NotFound
+                };
+
+                return failedResult;
+            }
+
+            toBeUpdated.Username = updateMemberRequestDto.Username ?? toBeUpdated.Username;
+            toBeUpdated.Email = updateMemberRequestDto.Email ?? toBeUpdated.Email;
+            toBeUpdated.FirstName = updateMemberRequestDto.FirstName ?? toBeUpdated.FirstName;
+            toBeUpdated.LastName = updateMemberRequestDto.LastName ?? toBeUpdated.LastName;
+            toBeUpdated.PhoneNumber = updateMemberRequestDto.PhoneNumber ?? toBeUpdated.PhoneNumber;
+            toBeUpdated.DateOfBirth = updateMemberRequestDto.DateOfBirth ?? toBeUpdated.DateOfBirth;
+            toBeUpdated.Gender = updateMemberRequestDto.Gender ?? toBeUpdated.Gender;
+
+            await _memberRepository.UpdateMemberAsync(toBeUpdated);
+
+            var data = new UpdateMemberResponseDto
+            {
+                MemberId = toBeUpdated.UserId,
+                Username = toBeUpdated.Username,
+                Email = toBeUpdated.Email,
+                FirstName = toBeUpdated.FirstName,
+                LastName = toBeUpdated.LastName,
+                PhoneNumber = toBeUpdated.PhoneNumber,
+                DateOfBirth = toBeUpdated.DateOfBirth,
+                Gender = toBeUpdated.Gender,
+                CitizenId = toBeUpdated.CitizenId,
+                Role = toBeUpdated.Role
             };
 
-            return failedResult;
+            var successResult = new ResultResponse<UpdateMemberResponseDto>
+            {
+                IsSuccess = true,
+                Data = data,
+                Messages = new[] { "Member updated successfully" },
+                Status = Status.Ok
+            };
+
+            return successResult;
         }
-
-        toBeUpdated.Username = updateMemberRequestDto.Username ?? toBeUpdated.Username;
-        toBeUpdated.Email = updateMemberRequestDto.Email ?? toBeUpdated.Email;
-        toBeUpdated.FirstName = updateMemberRequestDto.FirstName ?? toBeUpdated.FirstName;
-        toBeUpdated.LastName = updateMemberRequestDto.LastName ?? toBeUpdated.LastName;
-        toBeUpdated.PhoneNumber = updateMemberRequestDto.PhoneNumber ?? toBeUpdated.PhoneNumber;
-        toBeUpdated.DateOfBirth = updateMemberRequestDto.DateOfBirth ?? toBeUpdated.DateOfBirth;
-        toBeUpdated.Gender = updateMemberRequestDto.Gender ?? toBeUpdated.Gender;
-
-        await _memberRepository.UpdateMemberAsync(toBeUpdated);
-
-        var data = new UpdateMemberResponseDto
+        catch (Exception e)
         {
-            MemberId = toBeUpdated.UserId,
-            Username = toBeUpdated.Username,
-            Email = toBeUpdated.Email,
-            FirstName = toBeUpdated.FirstName,
-            LastName = toBeUpdated.LastName,
-            PhoneNumber = toBeUpdated.PhoneNumber,
-            DateOfBirth = toBeUpdated.DateOfBirth
-        };
-
-        var successResult = new ResultResponse<UpdateMemberResponseDto>
-        {
-            IsSuccess = true,
-            Data = data,
-            Messages = new[] { "Member updated successfully" },
-            Status = Status.Ok
-        };
-
-        return successResult;
+            return new ResultResponse<UpdateMemberResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
+                Status = Status.Error
+            };
+        }
     }
 
     public async Task<ResultResponse<DeleteMemberResponseDto>> DeleteMemberAsync(Guid id)
@@ -148,7 +163,8 @@ public class MemberService : IMemberService
                 PhoneNumber = toBeDeleted.PhoneNumber,
                 DateOfBirth = toBeDeleted.DateOfBirth,
                 Gender = toBeDeleted.Gender,
-                CitizenId = toBeDeleted.CitizenId
+                CitizenId = toBeDeleted.CitizenId,
+                Role = toBeDeleted.Role
             };
             var successResult = new ResultResponse<DeleteMemberResponseDto>
             {
@@ -164,7 +180,12 @@ public class MemberService : IMemberService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<DeleteMemberResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
+                Status = Status.Error
+            };
         }
     }
 
@@ -195,7 +216,8 @@ public class MemberService : IMemberService
                 PhoneNumber = data.PhoneNumber,
                 DateOfBirth = data.DateOfBirth,
                 Gender = data.Gender,
-                CitizenId = data.CitizenId
+                CitizenId = data.CitizenId,
+                Role = data.Role
             };
 
             var successResult = new ResultResponse<MemberDetailResponseDto>
@@ -210,7 +232,12 @@ public class MemberService : IMemberService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<MemberDetailResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
+                Status = Status.Error
+            };
         }
     }
 }

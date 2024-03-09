@@ -6,7 +6,7 @@ namespace Services;
 public interface IAdminService
 {
     Task<ListResponseBaseDto<AdminListResponseDto>> GetAdminsAsync(AdminQuery request);
-    Task AddAdminAsync(AddAdminRequestDto request);
-    Task UpdateAdminAsync(Guid id, UpdateAdminRequestDto request);
-    Task DeleteAdminAsync(Guid id);
+    Task<ResultResponse<AddAdminResponseDto>> AddAdminAsync(AddAdminRequestDto request);
+    Task<ResultResponse<UpdateAdminResponseDto>> UpdateAdminAsync(Guid id, UpdateAdminRequestDto request);
+    Task<ResultResponse<DeleteAdminResponseDto>> DeleteAdminAsync(Guid id);
 }

@@ -50,6 +50,7 @@ public class AdminService : IAdminService
                 PhoneNumber = x.PhoneNumber,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
+                Role = x.Role
             }).ToListAsync();
 
             var count = await _adminRepository.GetAdminCountAsync(request.Search);
@@ -70,10 +71,20 @@ public class AdminService : IAdminService
         }
     }
 
-    public Task AddAdminAsync(AddAdminRequestDto request)
+    public async Task<ResultResponse<AddAdminResponseDto>> AddAdminAsync(AddAdminRequestDto request)
     {
         try
         {
+            var existingAdmin = await _adminRepository.GetAdminAsync(x => x.Email == request.Email || x.CitizenId == request.CitizenId || x.PhoneNumber == request.PhoneNumber);
+
+            if (existingAdmin != null)
+                return new ResultResponse<AddAdminResponseDto>()
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "Admin already exists" },
+                    Status = Status.Duplicate
+                }; 
+            
             var admin = new Admin
             {
                 Username = request.Username,
@@ -86,33 +97,87 @@ public class AdminService : IAdminService
                 LastName = request.LastName,
                 Password = request.Password
             };
+            
+            var data = await _adminRepository.AddAdminAsync(admin);
+            
+            return new ResultResponse<AddAdminResponseDto>()
+            {
+                IsSuccess = true,
+                Messages = new[] { "Add successfully" },
+                Status = Status.Ok,
+                Data = new AddAdminResponseDto
+                {
+                    UserId = data.UserId,
+                    Username = data.Username,
+                    Email = data.Email,
+                    FirstName = data.FirstName,
+                    LastName = data.LastName,
+                    PhoneNumber = data.PhoneNumber,
+                    DateOfBirth = data.DateOfBirth.Date.ToString("yyyy-MM-d"),
+                    Gender = data.Gender,
+                    CitizenId = data.CitizenId,
+                    Role = data.Role
+                    
+                }
+            };
 
-            return _adminRepository.AddAdminAsync(admin);
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<AddAdminResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
+                Status = Status.Error
+            };
         }
     }
 
-    public async Task UpdateAdminAsync(Guid id, UpdateAdminRequestDto request)
+    public async Task<ResultResponse<UpdateAdminResponseDto>> UpdateAdminAsync(Guid id, UpdateAdminRequestDto request)
     {
         try
         {
             var toBeUpdated = await _adminRepository.GetAdminAsync(x => x.UserId == id);
 
-            if (toBeUpdated == null) throw new Exception("Admin not found");
+            if (toBeUpdated == null) return new ResultResponse<UpdateAdminResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { "Admin not found" },
+                Status = Status.NotFound
+            };
+            
+           
 
-            toBeUpdated.Username = request.Username ?? toBeUpdated.Username;
-            toBeUpdated.FirstName = request.FirstName ?? toBeUpdated.FirstName;
-            toBeUpdated.LastName = request.LastName ?? toBeUpdated.LastName;
-            toBeUpdated.CitizenId = request.CitizenId ?? toBeUpdated.CitizenId;
+            toBeUpdated.Username = !string.IsNullOrEmpty(request.Username) ? request.Username : toBeUpdated.Username;
+            toBeUpdated.FirstName = !string.IsNullOrEmpty(request.FirstName) ? request.FirstName : toBeUpdated.FirstName;
+            toBeUpdated.LastName = !string.IsNullOrEmpty(request.LastName) ? request.LastName : toBeUpdated.LastName;
+            toBeUpdated.CitizenId = !string.IsNullOrEmpty(request.CitizenId) ? request.CitizenId : toBeUpdated.CitizenId;
             toBeUpdated.DateOfBirth = request.DateOfBirth ?? toBeUpdated.DateOfBirth;
-            toBeUpdated.Email = request.Email ?? toBeUpdated.Email;
-            toBeUpdated.PhoneNumber = request.PhoneNumber ?? toBeUpdated.PhoneNumber;
+            toBeUpdated.Email = !string.IsNullOrEmpty(request.Email) ? request.Email : toBeUpdated.Email;
+            toBeUpdated.PhoneNumber = !string.IsNullOrEmpty(request.PhoneNumber) ? request.PhoneNumber : toBeUpdated.PhoneNumber;
             toBeUpdated.Gender = request.Gender ?? toBeUpdated.Gender;
             
             await _adminRepository.UpdateAdminAsync(toBeUpdated);
+            
+            return new ResultResponse<UpdateAdminResponseDto>()
+            {
+                IsSuccess = true,
+                Messages = new[] { "Update successfully" },
+                Status = Status.Ok,
+                Data = new UpdateAdminResponseDto
+                {
+                    UserId = toBeUpdated.UserId,
+                    Username = toBeUpdated.Username,
+                    Email = toBeUpdated.Email,
+                    FirstName = toBeUpdated.FirstName,
+                    LastName = toBeUpdated.LastName,
+                    PhoneNumber = toBeUpdated.PhoneNumber,
+                    DateOfBirth = toBeUpdated.DateOfBirth.Date.ToString("yyyy-MM-d"),
+                    Gender = toBeUpdated.Gender,
+                    CitizenId = toBeUpdated.CitizenId,
+                    Role = toBeUpdated.Role
+                }
+            };
         }
         catch (Exception e)
         {
@@ -120,18 +185,48 @@ public class AdminService : IAdminService
         }
     }
 
-    public async Task DeleteAdminAsync(Guid id)
+    public async Task<ResultResponse<DeleteAdminResponseDto>> DeleteAdminAsync(Guid id)
     {
         try
         {
             var toBeDeleted = await _adminRepository.GetAdminAsync(x => x.UserId == id);
-            if (toBeDeleted == null) throw new Exception("Admin not found");
+            if (toBeDeleted == null) return new ResultResponse<DeleteAdminResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { "Admin not found" },
+                Status = Status.NotFound
+            };
 
             await _adminRepository.DeleteAdminAsync(toBeDeleted);
+            
+            return new ResultResponse<DeleteAdminResponseDto>()
+            {
+                IsSuccess = true,
+                Messages = new[] { "Delete successfully" },
+                Status = Status.Ok,
+                Data = new DeleteAdminResponseDto
+                {
+                    UserId = toBeDeleted.UserId,
+                    Username = toBeDeleted.Username,
+                    Email = toBeDeleted.Email,
+                    FirstName = toBeDeleted.FirstName,
+                    LastName = toBeDeleted.LastName,
+                    PhoneNumber = toBeDeleted.PhoneNumber,
+                    DateOfBirth = toBeDeleted.DateOfBirth.Date.ToString("yyyy-MM-d"),
+                    Gender = toBeDeleted.Gender,
+                    CitizenId = toBeDeleted.CitizenId,
+                    Role = toBeDeleted.Role
+                }
+            };
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<DeleteAdminResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
+                Status = Status.Error
+            };
         }
     }
 }

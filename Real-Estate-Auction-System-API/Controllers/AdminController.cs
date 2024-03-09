@@ -28,28 +28,37 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddAdminAsync([FromBody] AddAdminRequestDto request)
+    public async Task<ActionResult<ResultResponse<AddAdminResponseDto>>> AddAdminAsync(
+        [FromBody] AddAdminRequestDto request)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        await _adminService.AddAdminAsync(request);
-        return Ok("Create successfully");
+        var result = await _adminService.AddAdminAsync(request);
+        if (result.Status == Status.Duplicate)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAdminAsync([FromRoute] Guid id, [FromBody] UpdateAdminRequestDto request)
+    public async Task<ActionResult<UpdateAdminResponseDto>> UpdateAdminAsync([FromRoute] Guid id,
+        [FromBody] UpdateAdminRequestDto request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        await _adminService.UpdateAdminAsync(id, request);
-        return Ok("Update successfully");
+        var result = await _adminService.UpdateAdminAsync(id, request);
+        if (result.Status == Status.NotFound) return NotFound(result);
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAdminAsync([FromRoute] Guid id)
+    public async Task<ActionResult<ResultResponse<DeleteAdminResponseDto>>> DeleteAdminAsync([FromRoute] Guid id)
     {
-        await _adminService.DeleteAdminAsync(id);
-        return Ok("Delete Successfully");
+        var result = await _adminService.DeleteAdminAsync(id);
+        if (result.Status == Status.NotFound) return NotFound(result);
+        return Ok(result);
     }
 }

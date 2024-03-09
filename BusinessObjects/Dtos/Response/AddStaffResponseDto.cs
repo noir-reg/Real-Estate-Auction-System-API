@@ -13,4 +13,5 @@ public class AddStaffResponseDto
     public string PhoneNumber { get; set; }
     public Gender Gender { get; set; }
     public string CitizenId { get; set; }
+    public string Role { get; set; }
 }

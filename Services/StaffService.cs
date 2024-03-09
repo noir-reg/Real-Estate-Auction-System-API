@@ -107,7 +107,8 @@ public class StaffService : IStaffService
                 PhoneNumber = addedStaff.PhoneNumber,
                 DateOfBirth = addedStaff.DateOfBirth,
                 Gender = addedStaff.Gender,
-                CitizenId = addedStaff.CitizenId
+                CitizenId = addedStaff.CitizenId,
+                Role = addedStaff.Role
             };
 
             var successResponse = new ResultResponse<AddStaffResponseDto>
@@ -162,7 +163,8 @@ public class StaffService : IStaffService
             PhoneNumber = toBeUpdated.PhoneNumber,
             DateOfBirth = toBeUpdated.DateOfBirth,
             Gender = toBeUpdated.Gender,
-            CitizenId = toBeUpdated.CitizenId
+            CitizenId = toBeUpdated.CitizenId,
+            Role = toBeUpdated.Role
         };
 
         var successResult = new ResultResponse<UpdateStaffResponseDto>
@@ -202,7 +204,8 @@ public class StaffService : IStaffService
                     PhoneNumber = staff.PhoneNumber,
                     DateOfBirth = staff.DateOfBirth,
                     Gender = staff.Gender,
-                    CitizenId = staff.CitizenId
+                    CitizenId = staff.CitizenId,
+                    Role = staff.Role
                 }
                 ;
 
@@ -218,23 +221,60 @@ public class StaffService : IStaffService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<StaffDetailResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message },
+                Status = Status.NotFound
+
+            };
         }
     }
 
-    public async Task DeleteStaffAsync(Guid id)
+    public async Task<ResultResponse<DeleteStaffResponseDto>> DeleteStaffAsync(Guid id)
     {
         try
         {
             var toBeDeleted = await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
-            if (toBeDeleted is null) throw new Exception("Staff not found");
+            if (toBeDeleted is null) return new ResultResponse<DeleteStaffResponseDto>()
+            {
+                Status = Status.NotFound,
+                Messages = new[] { "Staff not found" },
+                IsSuccess = false
+            };
+           
 
             await _staffRepository.DeleteStaffAsync(toBeDeleted);
+            return new ResultResponse<DeleteStaffResponseDto>()
+            {
+                Status = Status.Ok,
+                Messages = new[] { "Delete successfully" },
+                IsSuccess = true,
+                Data = new DeleteStaffResponseDto
+                {
+                    UserId = toBeDeleted.UserId,
+                    Username = toBeDeleted.Username,
+                    Email = toBeDeleted.Email,
+                    FirstName = toBeDeleted.FirstName,
+                    LastName = toBeDeleted.LastName,
+                    PhoneNumber = toBeDeleted.PhoneNumber,
+                    DateOfBirth = toBeDeleted.DateOfBirth,
+                    Gender = toBeDeleted.Gender,
+                    CitizenId = toBeDeleted.CitizenId,
+                    Role = toBeDeleted.Role
+                }
+
+            };
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<DeleteStaffResponseDto>()
+            {
+                Status = Status.Error,
+                Messages = new[] { e.Message,e.InnerException?.Message },
+                IsSuccess = false
+            };
         }
     }
 }
