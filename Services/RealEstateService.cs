@@ -27,6 +27,7 @@ public class RealEstateService : IRealEstateService
                 Status = "Active",
                 ImageUrl = request.ImageUrl,
                 Description = request.Description,
+                OwnerId = request.OwnerId
             };
 
             RealEstate result = await _realEstateRepository.AddRealEstateAsync(toBeAdded);
