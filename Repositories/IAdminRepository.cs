@@ -10,6 +10,6 @@ public interface IAdminRepository
     Task<int> GetAdminCountAsync(SearchAdminQuery? requestSearch);
     Task UpdateAdminAsync(Admin admin);
     Task DeleteAdminAsync(Admin admin);
-    Task AddAdminAsync(Admin admin);
+    Task<Admin> AddAdminAsync(Admin admin);
     Task<Admin?> GetAdminAsync(Expression<Func<Admin, bool>> predicate);
 }

@@ -14,12 +14,13 @@ public class StaffRepository : IStaffRepository
         _context = new RealEstateDbContext();
     }
 
-    public Task AddStaffAsync(Staff staff)
+    public async Task<Staff> AddStaffAsync(Staff staff)
     {
         try
         {
             _context.Staffs.Add(staff);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return staff;
         }
         catch (Exception e)
         {

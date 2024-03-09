@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace BusinessObjects.Entities;
@@ -40,7 +42,7 @@ public class RealEstateDbContext : DbContext
             .SetBasePath(Directory.GetCurrentDirectory())
             .Build();
 
-        return config.GetConnectionString("DefaultConnection");
+        return config.GetConnectionString("LocalConnection");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,8 +67,8 @@ public class RealEstateDbContext : DbContext
                     e.PhoneNumber
                 }).IsUnique()
                 ;
-            builder.HasDiscriminator(e => e.Role).HasValue<Admin>("Admin").HasValue<Member>("Member")
-                .HasValue<Staff>("Staff");
+            builder.HasDiscriminator(e => e.Role).HasValue<Admin>(typeof(Role).GetEnumName(Role.Admin)!).HasValue<Member>(typeof(Role).GetEnumName(Role.Member)!).
+                HasValue<Staff>(typeof(Role).GetEnumName(Role.Staff)!);
             builder.Property(e => e.Role).HasMaxLength(30).HasColumnType("nvarchar");
         });
 

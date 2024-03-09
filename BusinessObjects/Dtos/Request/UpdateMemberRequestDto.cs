@@ -16,6 +16,7 @@ public class UpdateMemberRequestDto
     [RegularExpression(@"(09|03|07|08|05)([0-9]{8})\b", ErrorMessage = "Invalid Phone Number")]
     public string? PhoneNumber { get; set; }
 
+    [DataType(DataType.Date)]
     public DateTime? DateOfBirth { get; set; }
     public Gender? Gender { get; set; }
 }

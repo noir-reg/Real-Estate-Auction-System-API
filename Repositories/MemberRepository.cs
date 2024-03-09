@@ -38,13 +38,14 @@ public class MemberRepository : IMemberRepository
         }
     }
 
-    public Task AddMemberAsync(Member member)
+    public async Task<Member> AddMemberAsync(Member member)
     {
         try
         {
             _context.Members.Add(member)
                 ;
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return member;
         }
         catch (Exception e)
         {

@@ -8,7 +8,7 @@ namespace Repositories;
 public interface IMemberRepository
 {
     Task<List<MemberListResponseDto>> GetMembersAsync();
-    Task AddMemberAsync(Member member);
+    Task<Member> AddMemberAsync(Member member);
     Task UpdateMemberAsync(Member member);
     Task DeleteMemberAsync(Member member);
     Task<Member?> GetMemberAsync(Expression<Func<Member, bool>> predicate);

@@ -11,4 +11,5 @@ public interface IUserRepository
     Task<List<User>> GetUsersAsync(UserQuery request);
     IQueryable<User> GetUserQuery();
     Task<int> GetUserCount(SearchUserQuery request);
+    Task DeleteAsync(User toBeDeleted);
 }

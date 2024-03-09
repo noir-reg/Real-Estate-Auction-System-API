@@ -9,4 +9,7 @@ public interface IUserService
 {
     Task<ListResponseBaseDto<UserListResponseDto>> GetUsersAsync(UserQuery request);
     Task<UserDetailResponseDto?> GetUserAsync(Expression<Func<User, bool>> predicate);
+    Task<ResultResponse<DeleteUserResponseDto>?> DeleteUserAsync(Guid id);
+    Task<ResultResponse<UpdateUserResponseDto>> UpdateUserAsync(Guid id, UpdateUserRequestDto request);
+    Task<ResultResponse<CreateUserResponseDto>> CreateUserAsync(CreateUserRequestDto request);
 }

@@ -50,12 +50,13 @@ public class AdminRepository : IAdminRepository
         }
     }
 
-    public Task AddAdminAsync(Admin admin)
+    public async Task<Admin> AddAdminAsync(Admin admin)
     {
         try
         {
             _context.Admins.Add(admin);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return admin;
         }
         catch (Exception e)
         {

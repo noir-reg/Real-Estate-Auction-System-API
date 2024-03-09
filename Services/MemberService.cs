@@ -47,7 +47,10 @@ public class MemberService : IMemberService
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     PhoneNumber = x.PhoneNumber,
-                    DateOfBirth = x.DateOfBirth.ToShortDateString()
+                    DateOfBirth = x.DateOfBirth.ToShortDateString(),
+                    Gender = x.Gender,
+                    CitizenId = x.CitizenId,
+                    Role = x.Role
                 })
                 .ToListAsync();
 

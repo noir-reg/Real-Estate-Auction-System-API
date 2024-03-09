@@ -1,8 +1,8 @@
-﻿namespace Utils.Constants;
+﻿namespace BusinessObjects.Constants;
 
 public static class FileTypes
 {
-   public  const string PDF = "application/pdf";
+   public const string PDF = "application/pdf";
    public const string JPEG = "image/jpeg";
    public const string PNG = "image/png";
    public const string DOC ="application/msword";

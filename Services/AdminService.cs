@@ -49,7 +49,7 @@ public class AdminService : IAdminService
                 Gender = x.Gender,
                 PhoneNumber = x.PhoneNumber,
                 FirstName = x.FirstName,
-                LastName = x.LastName
+                LastName = x.LastName,
             }).ToListAsync();
 
             var count = await _adminRepository.GetAdminCountAsync(request.Search);
@@ -110,7 +110,8 @@ public class AdminService : IAdminService
             toBeUpdated.DateOfBirth = request.DateOfBirth ?? toBeUpdated.DateOfBirth;
             toBeUpdated.Email = request.Email ?? toBeUpdated.Email;
             toBeUpdated.PhoneNumber = request.PhoneNumber ?? toBeUpdated.PhoneNumber;
-
+            toBeUpdated.Gender = request.Gender ?? toBeUpdated.Gender;
+            
             await _adminRepository.UpdateAdminAsync(toBeUpdated);
         }
         catch (Exception e)

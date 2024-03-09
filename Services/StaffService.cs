@@ -40,7 +40,10 @@ public class StaffService : IStaffService
             UserId = x.UserId,
             Username = x.Username, FirstName = x.FirstName,
             LastName = x.LastName,
-            Email = x.Email
+            Email = x.Email,
+            DateOfBirth = x.DateOfBirth.ToString("yyyy-MM-dd"),
+            Gender = x.Gender,
+            Role = x.Role
         }).ToListAsync();
 
         var count = await _staffRepository.GetStaffCountAsync(request.Search);
@@ -176,7 +179,7 @@ public class StaffService : IStaffService
     {
         try
         {
-            var staff= await _staffRepository.GetStaffAsync(x => x.UserId == id);
+            var staff = await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
             if (staff == null)
             {
@@ -188,21 +191,21 @@ public class StaffService : IStaffService
                 };
                 return failedResult;
             }
-            
+
             var data = new StaffDetailResponseDto
-            {
-                UserId = staff.UserId,
-                Username = staff.Username,
-                Email = staff.Email,
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                PhoneNumber = staff.PhoneNumber,
-                DateOfBirth = staff.DateOfBirth,
-                Gender = staff.Gender,
-                CitizenId = staff.CitizenId
-            }
+                {
+                    UserId = staff.UserId,
+                    Username = staff.Username,
+                    Email = staff.Email,
+                    FirstName = staff.FirstName,
+                    LastName = staff.LastName,
+                    PhoneNumber = staff.PhoneNumber,
+                    DateOfBirth = staff.DateOfBirth,
+                    Gender = staff.Gender,
+                    CitizenId = staff.CitizenId
+                }
                 ;
-            
+
 
             var successResult = new ResultResponse<StaffDetailResponseDto>
             {
@@ -212,7 +215,6 @@ public class StaffService : IStaffService
                 Data = data
             };
             return successResult;
-                    
         }
         catch (Exception e)
         {

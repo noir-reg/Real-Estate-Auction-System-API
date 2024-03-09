@@ -77,4 +77,17 @@ public class UserRepository : IUserRepository
 
         return query.CountAsync();
     }
+
+    public async Task DeleteAsync(User toBeDeleted)
+    {
+        try
+        {
+            _context.Users.Remove(toBeDeleted);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }
