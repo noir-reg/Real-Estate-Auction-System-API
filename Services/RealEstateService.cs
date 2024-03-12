@@ -201,4 +201,54 @@ public class RealEstateService : IRealEstateService
             };
         }
     }
+
+    public async Task<ResultResponse<GetSingleRealEstateResponseDto>> GetRealEstateById(Guid id)
+    {
+        try
+        {
+            var query = _realEstateRepository.GetRealEstatesQuery();
+
+            query = query.Include(x=>x.Owner).Where(x => x.RealEstateId == id);
+
+            var data = await query.Select(
+                x => new GetSingleRealEstateResponseDto()
+                {
+                    RealEstateId = x.RealEstateId,
+                    RealEstateName = x.RealEstateName,
+                    Address = x.Address,
+                    Status = x.Status,
+                    ImageUrl = x.ImageUrl,
+                    Description = x.Description,
+                    OwnerId = x.OwnerId,
+                    Owner = x.Owner
+                }).AsNoTracking().SingleOrDefaultAsync();
+
+            if (data == null)
+            {
+                return new ResultResponse<GetSingleRealEstateResponseDto>()
+                {
+                    IsSuccess = false,
+                    Messages = new[] { "RealEstate not found" },
+                    Status = Status.NotFound
+                };
+            }
+
+            return new ResultResponse<GetSingleRealEstateResponseDto>()
+            {
+                IsSuccess = true,
+                Data = data,
+                Status = Status.Ok,
+                Messages = new[] { "Get successfully" }
+            };
+
+        }
+        catch (Exception e)
+        {
+            return new ResultResponse<GetSingleRealEstateResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message }, Status = Status.Error
+            };
+        }
+    }
 }

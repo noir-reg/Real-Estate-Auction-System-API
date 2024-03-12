@@ -9,4 +9,5 @@ public interface IRealEstateService
     Task<ListResponseBaseDto<GetRealEstatesResponseDto>> GetRealEstates(RealEstateQuery request);
     Task<ResultResponse<UpdateRealEstateResponseDto>> UpdateRealEstate(Guid realEstateId,UpdateRealEstateRequestDto request);
     Task<ResultResponse<DeleteRealEstateResponseDto>> DeleteRealEstate(Guid id);
+    Task<ResultResponse<GetSingleRealEstateResponseDto>> GetRealEstateById(Guid id);
 }

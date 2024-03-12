@@ -60,9 +60,14 @@ public class RealEstateController : ControllerBase
    }
 
    [HttpGet("{id}")]
-   public async Task<ResultResponse<GetSingleRealEstateResponseDto>> GetRealEstateById(int id)
+   public async Task<ActionResult<ResultResponse<GetSingleRealEstateResponseDto>>> GetRealEstateById(Guid id)
    {
-       throw new NotImplementedException();
+       ResultResponse<GetSingleRealEstateResponseDto> result = await _realEstateService.GetRealEstateById(id);
+       if (result.Status == Status.NotFound)
+       {
+           return NotFound(result);
+       }
+       return Ok(result);
    }
 
    [HttpPost("{realEstateId}/legal-documents")]
