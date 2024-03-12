@@ -17,12 +17,13 @@ public class BidRepository : IBidRepository
         return _context.Bids.AsQueryable();
     }
 
-    public Task AddBidAsync(Bid bid)
+    public async Task<Bid> AddBidAsync(Bid bid)
     {
         try
         {
             _context.Bids.Add(bid);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return bid;
         }
         catch (Exception e)
         {
@@ -69,4 +70,6 @@ public class BidRepository : IBidRepository
             throw new Exception(e.Message);
         }
     }
+    
+    
 }
