@@ -37,12 +37,13 @@ public class AuctionRepository : IAuctionRepository
     //     }
     // }
 
-    public Task AddAuction(Auction auction)
+    public async Task<Auction> AddAuction(Auction auction)
     {
         try
         {
             _context.Auctions.Add(auction);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return auction;
         }
         catch (Exception e)
         {
