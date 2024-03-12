@@ -60,15 +60,18 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.LastName).IsRequired().HasMaxLength(30);
             builder.Property(e => e.Username).IsRequired().HasMaxLength(30);
             builder.HasIndex(e => new
-                {
-                    e.CitizenId,
-                    e.Email,
-                    e.Username,
-                    e.PhoneNumber
-                }).IsUnique()
-                ;
-            builder.HasDiscriminator(e => e.Role).HasValue<Admin>(typeof(Role).GetEnumName(Role.Admin)!).HasValue<Member>(typeof(Role).GetEnumName(Role.Member)!).
-                HasValue<Staff>(typeof(Role).GetEnumName(Role.Staff)!);
+            {
+                e.CitizenId,
+                e.Email,
+                e.Username,
+                e.PhoneNumber
+            }).IsUnique();
+            
+            builder.HasDiscriminator(e => e.Role)
+                .HasValue<Admin>(typeof(Role).GetEnumName(Role.Admin)!)
+                .HasValue<Member>(typeof(Role).GetEnumName(Role.Member)!)
+                .HasValue<Staff>(typeof(Role).GetEnumName(Role.Staff)!);
+                
             builder.Property(e => e.Role).HasMaxLength(30).HasColumnType("nvarchar");
         });
 
@@ -76,22 +79,47 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.AuctionId);
             builder.Property(e => e.AuctionId).ValueGeneratedOnAdd();
+            
             builder.Property(e => e.Title).IsRequired().HasMaxLength(50).HasColumnType("nvarchar");
+            
             builder.Property(e => e.Description).IsRequired().HasColumnType("text");
-            builder.Property(e => e.Status).IsRequired().HasMaxLength(30).HasColumnType("nvarchar");
+            builder.Property(e => e.Status).IsRequired()
+                .HasMaxLength(30)
+                .HasColumnType("nvarchar");
+            
             builder.Property(e => e.IncrementalPrice).IsRequired().HasPrecision(18, 0);
+            
             builder.Property(e => e.InitialPrice).IsRequired().HasPrecision(18, 0);
-            builder.HasOne(e => e.StartingBid).WithOne().HasForeignKey<Auction>(e => e.StartingBidId)
+
+            builder.HasOne(e => e.StartingBid)
+                .WithOne()
+                .HasForeignKey<Auction>(e => e.StartingBidId)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(e => e.CurrentBid).WithOne().HasForeignKey<Auction>(e => e.CurrentBidId)
+
+            builder.HasOne(e => e.CurrentBid)
+                .WithOne()
+                .HasForeignKey<Auction>(e => e.CurrentBidId)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(e => e.WinningBid).WithOne().HasForeignKey<Auction>(e => e.WinningBidId)
+
+            builder.HasOne(e => e.WinningBid)
+                .WithOne()
+                .HasForeignKey<Auction>(e => e.WinningBidId)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(e => e.RealEstate).WithOne(e => e.Auction).HasForeignKey<Auction>(e => e.RealEstateId);
+            builder.HasOne(e => e.RealEstate)
+                .WithOne(e => e.Auction)
+                .HasForeignKey<Auction>(e => e.RealEstateId);
+            
             builder.Property(e => e.ListingDate).IsRequired().ValueGeneratedOnAdd();
-            builder.HasOne(e => e.Admin).WithOne(e => e.Auction).HasForeignKey<Auction>(e => e.AdminId)
-                .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(e => e.Staff).WithMany(e => e.Auctions).HasForeignKey(e => e.StaffId)
+            
+            builder.HasOne(e => e.Admin)
+                .WithOne(e => e.Auction)
+                .HasForeignKey<Auction>(e => e.AdminId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
+            builder.HasOne(e => e.Staff)
+                .WithMany(e => e.Auctions)
+                .HasForeignKey(e => e.StaffId)
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
@@ -99,10 +127,16 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.RealEstateId);
             builder.Property(e => e.RealEstateId).ValueGeneratedOnAdd();
-            builder.Property(e => e.Status).HasColumnType("nvarchar").HasMaxLength(30).IsRequired();
+            
+            builder.Property(e => e.Status)
+                .HasColumnType("nvarchar")
+                .HasMaxLength(30)
+                .IsRequired();
+            
             builder.Property(e => e.Address).HasColumnType("nvarchar").HasMaxLength(100);
             builder.Property(e => e.Description).HasColumnType("text");
             builder.Property(e => e.ImageUrl).HasColumnType("text");
+            
             builder.HasOne(e => e.Owner).WithMany(e => e.RealEstates).HasForeignKey(e => e.OwnerId);
         });
 
@@ -111,6 +145,7 @@ public class RealEstateDbContext : DbContext
             builder.HasKey(e => e.RegistrationId);
             builder.Property(e => e.RegistrationId).ValueGeneratedOnAdd();
             builder.Property(e => e.RegistrationStatus).HasColumnType("nvarchar").HasMaxLength(30);
+            
             builder.Property(e => e.RegistrationDate).ValueGeneratedOnAdd();
             builder.Property(e => e.DepositAmount).HasPrecision(18, 0);
         });
@@ -121,16 +156,25 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.TransactionId).ValueGeneratedOnAdd();
             builder.Property(e => e.TransactionDate).ValueGeneratedOnAdd();
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
+            
             builder.Property(e => e.Status).HasColumnType("nvarchar").HasMaxLength(30);
-            builder.Property(e => e.PaymentMethod).HasColumnType("nvarchar").HasMaxLength(30);
-            builder.HasOne(e => e.Bid).WithOne(e => e.Transaction).HasForeignKey<Transaction>(e => e.TransactionId);
+            
+            builder.Property(e => e.PaymentMethod)
+                .HasColumnType("nvarchar")
+                .HasMaxLength(30);
+            
+            builder.HasOne(e => e.Bid)
+                .WithOne(e => e.Transaction)
+                .HasForeignKey<Transaction>(e => e.TransactionId);
         });
 
         modelBuilder.Entity<RealEstateOwner>(builder =>
         {
             builder.HasKey(e => e.RealEstateOwnerId);
             builder.Property(e => e.RealEstateOwnerId).ValueGeneratedOnAdd();
+            
             builder.Property(e => e.CitizenId).HasMaxLength(10).IsFixedLength().IsRequired();
+            
             builder.Property(e => e.ContactInformation).HasColumnType("text");
         });
 
@@ -138,8 +182,13 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.BidId);
             builder.Property(e => e.BidId).ValueGeneratedOnAdd();
-            builder.HasOne(e => e.Member).WithMany(e => e.Bids).HasForeignKey(e => e.MemberId);
-            builder.HasOne(e => e.Auction).WithMany(e => e.Bids).HasForeignKey(e => e.AuctionId);
+            builder.HasOne(e => e.Member)
+                .WithMany(e => e.Bids)
+                .HasForeignKey(e => e.MemberId);
+            
+            builder.HasOne(e => e.Auction)
+                .WithMany(e => e.Bids)
+                .HasForeignKey(e => e.AuctionId);
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
             builder.Property(e => e.IsWinningBid).IsRequired();
         });
@@ -150,8 +199,12 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.DocumentId).ValueGeneratedOnAdd();
             builder.Property(e => e.DocumentUrl).HasColumnType("text");
             builder.Property(e => e.DocumentType).HasColumnType("nvarchar").HasMaxLength(30);
-            builder.Property(e => e.FileName).HasColumnType("nvarchar").HasMaxLength(100);
-            builder.HasOne(e => e.RealEstate).WithMany(e => e.LegalDocuments).HasForeignKey(e => e.RealEstateId);
+            builder.Property(e => e.FileName)
+                .HasColumnType("nvarchar")
+                .HasMaxLength(100);
+            builder.HasOne(e => e.RealEstate)
+                .WithMany(e => e.LegalDocuments)
+                .HasForeignKey(e => e.RealEstateId);
         });
 
         modelBuilder.Entity<AuctionRegistration>().ToTable("AuctionRegistrations");
