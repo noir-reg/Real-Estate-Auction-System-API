@@ -106,7 +106,7 @@ public class LegalDocumentService : ILegalDocumentService
                 DocumentId = x.DocumentId,
                 DocumentUrl = x.DocumentUrl,
                 DocumentType = x.DocumentType,
-                Title = x.FileName,
+                FileName = x.FileName,
                 Description = x.Description,
                 RealEstateId = x.RealEstateId
             }).AsNoTracking().ToListAsync();
@@ -154,7 +154,7 @@ public class LegalDocumentService : ILegalDocumentService
                     DocumentId = x.DocumentId,
                     DocumentUrl = x.DocumentUrl,
                     DocumentType = x.DocumentType,
-                    Title = x.FileName,
+                    FileName = x.FileName,
                     Description = x.Description,
                     RealEstateId = x.RealEstateId
                 }).AsNoTracking().ToListAsync();
