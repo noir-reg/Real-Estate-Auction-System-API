@@ -8,7 +8,7 @@ namespace BusinessObjects.Dtos.Request
 {
     public class PaymentRequest
     {
-        public int Amount { get; set; }
+        public long Amount { get; set; }
         public string StripeToken { get; set; }
     }
 }

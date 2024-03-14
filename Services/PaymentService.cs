@@ -19,9 +19,9 @@ public class PaymentService : IPaymentService
             var options = new ChargeCreateOptions
             {
                 Amount = paymentRequest.Amount,
-                Currency = "usd",
+                Currency = "vnd",
                 Description = "Payment for service",
-                Source = paymentRequest.Token
+                Source = paymentRequest.StripeToken
             };
 
             var service = new ChargeService();
