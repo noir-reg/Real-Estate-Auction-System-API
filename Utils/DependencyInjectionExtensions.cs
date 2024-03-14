@@ -20,6 +20,8 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ILegalDocumentService, LegalDocumentService>();
         services.AddScoped<IRealEstateService, RealEstateService>();
         services.AddScoped<IBidService, BidService>();
+        services.AddScoped<IMailService, MailService>();
+
     }
 
     public static void AddRepositories(this IServiceCollection services)
