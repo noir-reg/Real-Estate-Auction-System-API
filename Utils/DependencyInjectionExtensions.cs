@@ -21,6 +21,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRealEstateService, RealEstateService>();
         services.AddScoped<IBidService, BidService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddScoped<IPaymentService, PaymentService>();
 
     }
 

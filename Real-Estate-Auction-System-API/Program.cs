@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Real_Estate_Auction_System_API.Hubs;
+using Stripe;
 using Utils;
 
 namespace Real_Estate_Auction_System_API;
@@ -17,6 +18,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        StripeConfiguration.ApiKey = builder.Configuration["StripeSecretKey"];
+        
         builder.Services.AddSignalR();
         builder.Services.AddControllers().AddJsonOptions(options =>
         {
