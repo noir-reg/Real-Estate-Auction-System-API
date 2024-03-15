@@ -48,6 +48,7 @@ public class AuctionService : IAuctionService
                 AuctionPeriodStart = request.AuctionPeriodStart,
                 AuctionPeriodEnd = request.AuctionPeriodEnd,
                 IncrementalPrice = request.IncrementalPrice,
+                AdminId = request.AdminId
             };
 
             var data = await _auctionRepository.AddAuction(toBeAdded);
