@@ -125,6 +125,12 @@ public class AuctionService : IAuctionService
                 AuctionPeriodStart = auction.AuctionPeriodStart,
                 AuctionPeriodEnd = auction.AuctionPeriodEnd,
                 IncrementalPrice = auction.IncrementalPrice,
+                RealEstateName = realEstate.RealEstateName,
+                RealEstateOwnerName = realEstate.Owner.FullName,
+                Address = realEstate.Address,
+                Thumbnail = realEstate.ImageUrl,
+                RegistrationPeriodStart = auction.RegistrationPeriodStart,
+                RegistrationPeriodEnd = auction.RegistrationPeriodEnd,
                 LegalDocuments = legalDocuments
             };
 
