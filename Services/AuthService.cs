@@ -61,13 +61,14 @@ public class AuthService : IAuthService
 
             var email = dto.Email;
 
-            var result = await _memberRepository.GetMemberAsync(x => x.Email == email);
+            var result = await _userRepository.GetUserAsync(x => x.Email == email || x.Username == dto.Username
+                || x.CitizenId == dto.CitizenId || x.PhoneNumber == dto.PhoneNumber);
             if (result != null)
             {
                 var failedResult = new ResultResponse<RegisterMemberResponseDto>
                 {
                     IsSuccess = false,
-                    Messages = new[] { "Email already exists" }, Status = Status.Duplicate
+                    Messages = new[] { "User already exists" }, Status = Status.Duplicate
                 };
                 return failedResult;
             }
@@ -99,7 +100,12 @@ public class AuthService : IAuthService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return new ResultResponse<RegisterMemberResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message,e.StackTrace,e.Source,e.InnerException?.ToString() },
+                Status = Status.Error
+            };
         }
     }
 }
