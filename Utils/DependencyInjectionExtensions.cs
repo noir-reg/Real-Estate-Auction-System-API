@@ -22,6 +22,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IBidService, BidService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IOwnerService, OwnerService>();
 
     }
 
@@ -38,7 +39,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRealEstateOwnerRepository, RealEstateOwnerRepository>();
         services.AddScoped<ILegalDocumentRepository, LegalDocumentRepository>();
         services.AddScoped<IStaffRepository, StaffRepository>();
-        
+        services.AddScoped<IOwnerRepository, OwnerRepository>();
     }
   
 }

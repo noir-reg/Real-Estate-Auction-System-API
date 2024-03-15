@@ -42,7 +42,12 @@ public class StaffQuery : BaseQueryDto
     public StaffSortBy SortBy { get; set; }
     public OrderDirection OrderDirection { get; set; }
 }
-
+public class OwnerQuery : BaseQueryDto
+{
+    public SearchOwnerQuery? Search { get; set; }
+    public OwnerSortBy SortBy { get; set; }
+    public OrderDirection OrderDirection { get; set; }
+}
 public class AdminQuery : BaseQueryDto
 {
     public SearchAdminQuery? Search { get; set; }
@@ -76,12 +81,18 @@ public enum MemberSortBy
 {
     Username
 }
-
+public enum OwnerSortBy
+{
+    FullName
+}
 public class SearchMemberQuery
 {
     public string? Username { get; set; }
 }
-
+public class SearchOwnerQuery
+{
+    public string? FullName { get; set; }
+}
 public class SearchStaffQuery
 {
     public string? Username { get; set; }
