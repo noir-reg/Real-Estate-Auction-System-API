@@ -136,7 +136,7 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.Address).HasColumnType("nvarchar").HasMaxLength(100);
             builder.Property(e => e.Description).HasColumnType("text");
             builder.Property(e => e.ImageUrl).HasColumnType("text");
-            
+            builder.HasOne(e => e.Auction).WithOne(e => e.RealEstate).HasForeignKey<RealEstate>(e => e.AuctionId);
             builder.HasOne(e => e.Owner).WithMany(e => e.RealEstates).HasForeignKey(e => e.OwnerId);
         });
 
@@ -198,7 +198,7 @@ public class RealEstateDbContext : DbContext
             builder.HasKey(e => e.DocumentId);
             builder.Property(e => e.DocumentId).ValueGeneratedOnAdd();
             builder.Property(e => e.DocumentUrl).HasColumnType("text");
-            builder.Property(e => e.DocumentType).HasColumnType("nvarchar").HasMaxLength(30);
+            builder.Property(e => e.DocumentType).HasColumnType("nvarchar").HasMaxLength(100);
             builder.Property(e => e.FileName)
                 .HasColumnType("nvarchar")
                 .HasMaxLength(100);

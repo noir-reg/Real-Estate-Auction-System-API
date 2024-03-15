@@ -29,4 +29,11 @@ public class AuctionController : ControllerBase
         var response = await _auctionService.CreateAuction(request);
         return Ok(response);
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ResultResponse<AuctionPostDetailResponseDto>>> GetAuctionById([FromRoute] Guid id)
+    {
+        var response = await _auctionService.GetAuctionById(id);
+        return Ok(response);
+    }
 }
