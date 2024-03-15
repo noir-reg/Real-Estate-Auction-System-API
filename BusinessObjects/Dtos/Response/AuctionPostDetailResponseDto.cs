@@ -13,8 +13,8 @@ public class AuctionPostDetailResponseDto
     public string? Address { get; set; }
     public string Thumbnail { get; set; } = "https://data.lvo.vn/media/upload/1004603/online-auction-sales_istock.jpg";
     public string? Description { get; set; }
-    public DateTime RegistrationStartPeriod { get; set; }
-    public DateTime RegistrationEndPeriod { get; set; }
+    public DateTime RegistrationPeriodStart { get; set; }
+    public DateTime RegistrationPeriodEnd { get; set; }
     public DateTime AuctionPeriodStart { get; set; }
     public DateTime AuctionPeriodEnd { get; set; }
     public IEnumerable<GetLegalDocumentsResponseDto>? LegalDocuments { get; set; }
