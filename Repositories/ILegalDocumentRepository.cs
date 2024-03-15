@@ -14,4 +14,5 @@ public interface ILegalDocumentRepository
     // Task Delete(LegalDocument legalDocument);
 
     Task<int> GetCount(Expression<Func<LegalDocument, bool>> predicate);
+    Task<List<GetLegalDocumentsResponseDto>> GetLegalDocuments(Expression<Func<LegalDocument, bool>>? predicate);
 }

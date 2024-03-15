@@ -40,5 +40,25 @@ public class LegalDocumentRepository : ILegalDocumentRepository
         if (predicate != null) query = query.Where(predicate);
         return query.CountAsync();
     }
-    
+
+    public Task<List<GetLegalDocumentsResponseDto>> GetLegalDocuments(Expression<Func<LegalDocument, bool>>? predicate)
+    {
+       return predicate == null
+            ? _context.LegalDocuments
+                .Select(x => new GetLegalDocumentsResponseDto
+                {
+                    DocumentId = x.DocumentId,
+                    FileName = x.FileName,
+                    DocumentType = x.DocumentType
+                }).ToListAsync()
+            : _context.LegalDocuments
+                .Where(predicate)
+                .Select(x => new GetLegalDocumentsResponseDto
+                {
+                    DocumentId = x.DocumentId,
+                    FileName = x.FileName,
+                    DocumentUrl = x.DocumentUrl
+                }).ToListAsync(); 
+            
+    }
 }

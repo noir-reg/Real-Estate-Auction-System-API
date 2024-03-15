@@ -11,5 +11,6 @@ public class RealEstate
     public IEnumerable<LegalDocument> LegalDocuments { get; set; } = new List<LegalDocument>();
     public Guid OwnerId { get; set; }
     public RealEstateOwner Owner { get; set; }
+    public Guid AuctionId { get; set; }
     public Auction Auction { get; set; }
 }
