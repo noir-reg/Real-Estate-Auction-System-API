@@ -20,6 +20,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ILegalDocumentService, LegalDocumentService>();
         services.AddScoped<IRealEstateService, RealEstateService>();
         services.AddScoped<IBidService, BidService>();
+        services.AddScoped<IAuctionPostService, AuctionPostService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IOwnerService, OwnerService>();

@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240315060139_AddAuctionIdToRealEsate")]
+    partial class AddAuctionIdToRealEsate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,9 +94,6 @@ namespace BusinessObjects.Migrations
                     b.HasIndex("CurrentBidId")
                         .IsUnique()
                         .HasFilter("[CurrentBidId] IS NOT NULL");
-
-                    b.HasIndex("RealEstateId")
-                        .IsUnique();
 
                     b.HasIndex("StaffId");
 
@@ -186,8 +185,8 @@ namespace BusinessObjects.Migrations
 
                     b.Property<string>("DocumentType")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("DocumentUrl")
                         .IsRequired()
@@ -219,7 +218,7 @@ namespace BusinessObjects.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid?>("AuctionId")
+                    b.Property<Guid>("AuctionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -245,8 +244,7 @@ namespace BusinessObjects.Migrations
                     b.HasKey("RealEstateId");
 
                     b.HasIndex("AuctionId")
-                        .IsUnique()
-                        .HasFilter("[AuctionId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("OwnerId");
 
@@ -496,7 +494,9 @@ namespace BusinessObjects.Migrations
                 {
                     b.HasOne("BusinessObjects.Entities.Auction", "Auction")
                         .WithOne("RealEstate")
-                        .HasForeignKey("BusinessObjects.Entities.RealEstate", "AuctionId");
+                        .HasForeignKey("BusinessObjects.Entities.RealEstate", "AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BusinessObjects.Entities.RealEstateOwner", "Owner")
                         .WithMany("RealEstates")

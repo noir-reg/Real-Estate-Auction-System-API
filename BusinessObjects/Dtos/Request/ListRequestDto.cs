@@ -151,3 +151,7 @@ public enum LegalDocumentSortBy
 {
     FileName
 }
+public class AuctionPostsQuery : BaseQueryDto
+{
+   public string? Title { get; set; } 
+}

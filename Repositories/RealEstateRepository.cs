@@ -19,7 +19,7 @@ public class RealEstateRepository : IRealEstateRepository
     {
         try
         {
-            var result = _context.RealEstates.SingleOrDefaultAsync(predicate);
+            var result = _context.RealEstates.Include(x=>x.Owner).SingleOrDefaultAsync(predicate);
             return result;
         }
         catch (Exception e)

@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
 using BusinessObjects.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 
 namespace Services;
@@ -8,10 +9,14 @@ namespace Services;
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
+    private readonly ILegalDocumentRepository _documentRepository;
+    private readonly IRealEstateRepository _realEstateRepository;
 
-    public AuctionService(IAuctionRepository auctionRepository)
+    public AuctionService(IAuctionRepository auctionRepository, ILegalDocumentRepository documentRepository, IRealEstateRepository realEstateRepository)
     {
         _auctionRepository = auctionRepository;
+        _documentRepository = documentRepository;
+        _realEstateRepository = realEstateRepository;
     }
 
     // public Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> dto)
@@ -43,6 +48,7 @@ public class AuctionService : IAuctionService
                 AuctionPeriodStart = request.AuctionPeriodStart,
                 AuctionPeriodEnd = request.AuctionPeriodEnd,
                 IncrementalPrice = request.IncrementalPrice,
+                AdminId = request.AdminId
             };
 
             var data = await _auctionRepository.AddAuction(toBeAdded);
@@ -75,6 +81,74 @@ public class AuctionService : IAuctionService
             {
                 IsSuccess = false,
                 Messages = new[] { e.Message },
+                Status = Status.Error
+            };
+        }
+    }
+
+    public async Task<ResultResponse<AuctionPostDetailResponseDto>> GetAuctionById(Guid auctionId)
+    {
+        try
+        {
+            Auction? auction = await _auctionRepository.GetAuction(x=>x.AuctionId == auctionId); 
+            
+            if (auction == null)
+            {
+                return new ResultResponse<AuctionPostDetailResponseDto>()
+                {
+                    IsSuccess = false,
+                    Status = Status.NotFound,
+                    Messages = new[] { "Auction not found" }
+                };
+            }
+
+            var realEstate = await _realEstateRepository.GetRealEstate(x => x.AuctionId == auctionId);
+            
+            if (realEstate == null)
+            {
+                return new ResultResponse<AuctionPostDetailResponseDto>()
+                {
+                    IsSuccess = false,
+                    Status = Status.NotFound,
+                    Messages = new[] { "RealEstate not found" }
+                };
+            }
+            
+            var legalDocuments = await _documentRepository.GetLegalDocuments(x => x.RealEstateId == realEstate.RealEstateId);
+            
+            var data = new AuctionPostDetailResponseDto
+            {
+                AuctionId = auction.AuctionId,
+                Title = auction.Title,
+                Description = auction.Description,
+                RealEstateId = realEstate.RealEstateId,
+                InitialPrice = auction.InitialPrice,
+                AuctionPeriodStart = auction.AuctionPeriodStart,
+                AuctionPeriodEnd = auction.AuctionPeriodEnd,
+                IncrementalPrice = auction.IncrementalPrice,
+                RealEstateName = realEstate.RealEstateName,
+                RealEstateOwnerName = realEstate.Owner.FullName,
+                Address = realEstate.Address,
+                Thumbnail = realEstate.ImageUrl,
+                RegistrationPeriodStart = auction.RegistrationPeriodStart,
+                RegistrationPeriodEnd = auction.RegistrationPeriodEnd,
+                LegalDocuments = legalDocuments
+            };
+
+            return new ResultResponse<AuctionPostDetailResponseDto>()
+            {
+                IsSuccess = true,
+                Data = data,
+                Status = Status.Ok,
+                Messages = new[] { "Get auction successfully" }
+            };
+        }
+        catch (Exception e)
+        {
+            return new ResultResponse<AuctionPostDetailResponseDto>()
+            {
+                IsSuccess = false,
+                Messages = new[] { e.Message, e.InnerException?.Message },
                 Status = Status.Error
             };
         }

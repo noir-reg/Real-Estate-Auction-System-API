@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Entities;
+﻿using System.Linq.Expressions;
+using BusinessObjects.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories;
 
@@ -80,5 +82,24 @@ public class AuctionRepository : IAuctionRepository
     public IQueryable<Auction> GetAuctionQuery()
     {
         return _context.Auctions.AsQueryable();
+    }
+
+    public Task<int> GetCountAsync(Expression<Func<Auction, bool>>? wherePredicate)
+    {
+        try
+        {
+            return wherePredicate == null
+                ? _context.Auctions.AsNoTracking().CountAsync()
+                : _context.Auctions.AsNoTracking().CountAsync(wherePredicate);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public Task<Auction?> GetAuction(Expression<Func<Auction,bool>> predicate)
+    {
+        return _context.Auctions.SingleOrDefaultAsync(predicate);
     }
 }

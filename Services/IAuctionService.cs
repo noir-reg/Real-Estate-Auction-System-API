@@ -7,4 +7,5 @@ public interface IAuctionService
 {
     // Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> dto);
     Task<ResultResponse<CreateAuctionResponseDto>> CreateAuction(CreateAuctionRequestDto request);
+    Task<ResultResponse<AuctionPostDetailResponseDto>> GetAuctionById(Guid auctionId);
 }
