@@ -11,5 +11,7 @@ namespace Services
     public interface IPaymentService
     {
         PaymentResponse ProcessPayment(PaymentRequest paymentRequest);
+        public List<PaymentInfo> GetAllPaymentInfo();
+        public PaymentInfo GetPaymentInfo(string paymentId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Dtos.Request;
+using BusinessObjects.Dtos.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -15,12 +16,24 @@ namespace Real_Estate_Auction_System_API.Controllers
             _paymentService = paymentService;
         }
         [HttpPost]
-        public IActionResult Processpayment([FromBody] PaymentRequest paymentRequest)
+        public ActionResult<PaymentResponse> Processpayment([FromBody] PaymentRequest paymentRequest)
         {
             var result = _paymentService.ProcessPayment(paymentRequest);
             if (result.isSuccess)
                 return Ok(result);
             else return BadRequest(result);
+        }
+        [HttpGet]
+        public ActionResult<List<PaymentInfo>> GetAllPaymentInfor()
+        {
+            var result = _paymentService.GetAllPaymentInfo();
+            return Ok(result);
+        }
+        [HttpGet("paymentId")]
+        public ActionResult<PaymentInfo> GetPaymentInfor(string paymentId)
+        {
+            var result = _paymentService.GetPaymentInfo(paymentId);
+            return Ok(result);
         }
     }
 }
