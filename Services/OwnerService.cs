@@ -40,13 +40,13 @@ public class OwnerService : IOwnerService
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        var data = await query.Include(x => x.RealEstates).Select(x => new OwnerResponse
+        var data = await query.Include(x => x.Auctions).Select(x => new OwnerResponse
         {
             FullName = x.FullName,
             CitizenId = x.CitizenId,
             ContactInformation = x.ContactInformation,
             RealEstateOwnerId = x.RealEstateOwnerId,
-            RealEstates = x.RealEstates.ToList()                    
+            Auctions = x.Auctions.ToList()
         }).ToListAsync();
 
         var count = await _ownerRepository.GetOwnerCountAsync(request.Search);
@@ -179,7 +179,7 @@ public class OwnerService : IOwnerService
                 FullName = owner.FullName,
                 CitizenId = owner.CitizenId,
                 ContactInformation = owner.ContactInformation,
-                RealEstates = owner.RealEstates.ToList()
+                Auctions = owner.Auctions.ToList()
             };
 
 
@@ -215,7 +215,7 @@ public class OwnerService : IOwnerService
                 Messages = new[] { "Staff not found" },
                 IsSuccess = false
             };
-            if (toBeDeleted.RealEstates != null)
+            if (toBeDeleted.Auctions != null)
             {
                 return new ResultResponse<OwnerDeleteResponse>()
                 {
@@ -254,12 +254,12 @@ public class OwnerService : IOwnerService
     }
     public List<RealEstateOwner> GetAllOwners()
     {
-        var list = _ownerRepository.GetOwnerQuery().Include(x=>x.RealEstates).Select(x=>new RealEstateOwner { 
+        var list = _ownerRepository.GetOwnerQuery().Include(x=>x.Auctions).Select(x=>new RealEstateOwner { 
         RealEstateOwnerId=x.RealEstateOwnerId,
         FullName = x.FullName,
         ContactInformation = x.ContactInformation,
         CitizenId=x.CitizenId,
-        RealEstates = x.RealEstates.ToList()  
+        Auctions=x.Auctions
         }).ToList();
         return list;
     }

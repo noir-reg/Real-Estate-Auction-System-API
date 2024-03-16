@@ -98,7 +98,7 @@ public class RealEstateController : ControllerBase
         [FromRoute] Guid realEstateId,
         [FromQuery] LegalDocumentQuery query)
     {
-        var result = await _legalDocumentService.GetLegalDocuments(realEstateId: realEstateId, query: query);
+        var result = await _legalDocumentService.GetLegalDocuments(auctionId: realEstateId, query: query);
 
         return Ok(result);
     }

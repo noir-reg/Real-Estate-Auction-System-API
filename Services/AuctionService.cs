@@ -10,27 +10,14 @@ public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
     private readonly ILegalDocumentRepository _documentRepository;
-    private readonly IRealEstateRepository _realEstateRepository;
 
-    public AuctionService(IAuctionRepository auctionRepository, ILegalDocumentRepository documentRepository, IRealEstateRepository realEstateRepository)
+    public AuctionService(IAuctionRepository auctionRepository, ILegalDocumentRepository documentRepository)
     {
         _auctionRepository = auctionRepository;
         _documentRepository = documentRepository;
-        _realEstateRepository = realEstateRepository;
     }
 
-    // public Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> dto)
-    // {
-    //     try
-    //     {
-    //         var result = _auctionRepository.GetAuctions(dto);
-    //         return result;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+   
     public async Task<ResultResponse<CreateAuctionResponseDto>> CreateAuction(CreateAuctionRequestDto request)
     {
         try
@@ -40,7 +27,7 @@ public class AuctionService : IAuctionService
                 Title = request.Title,
                 Status = "Active",
                 Description = request.Description,
-                RealEstateId = request.RealEstateId,
+                RealEstateCode = request.RealEstateCode,
                 RegistrationPeriodStart = request.RegistrationPeriodStart,
                 RegistrationPeriodEnd = request.RegistrationPeriodEnd,
                 InitialPrice = request.InitialPrice,
@@ -62,7 +49,7 @@ public class AuctionService : IAuctionService
                     Title = data.Title,
                     Status = data.Status,
                     Description = data.Description,
-                    RealEstateId = data.RealEstateId,
+                    RealEstateCode = data.RealEstateCode,
                     RegistrationPeriodStart = data.RegistrationPeriodStart,
                     RegistrationPeriodEnd = data.RegistrationPeriodEnd,
                     InitialPrice = data.InitialPrice,
@@ -77,14 +64,11 @@ public class AuctionService : IAuctionService
         }
         catch (Exception e)
         {
-            return new ResultResponse<CreateAuctionResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<CreateAuctionResponseDto>(e);
         }
     }
+    
+ 
 
     public async Task<ResultResponse<AuctionPostDetailResponseDto>> GetAuctionById(Guid auctionId)
     {
@@ -101,38 +85,25 @@ public class AuctionService : IAuctionService
                     Messages = new[] { "Auction not found" }
                 };
             }
-
-            var realEstate = await _realEstateRepository.GetRealEstate(x => x.AuctionId == auctionId);
             
-            if (realEstate == null)
-            {
-                return new ResultResponse<AuctionPostDetailResponseDto>()
-                {
-                    IsSuccess = false,
-                    Status = Status.NotFound,
-                    Messages = new[] { "RealEstate not found" }
-                };
-            }
-            
-            var legalDocuments = await _documentRepository.GetLegalDocuments(x => x.RealEstateId == realEstate.RealEstateId);
+            var legalDocuments = await _documentRepository.GetLegalDocuments(x => x.AuctionId == auctionId);
             
             var data = new AuctionPostDetailResponseDto
             {
                 AuctionId = auction.AuctionId,
                 Title = auction.Title,
                 Description = auction.Description,
-                RealEstateId = realEstate.RealEstateId,
                 InitialPrice = auction.InitialPrice,
                 AuctionPeriodStart = auction.AuctionPeriodStart,
                 AuctionPeriodEnd = auction.AuctionPeriodEnd,
                 IncrementalPrice = auction.IncrementalPrice,
-                RealEstateName = realEstate.RealEstateName,
-                RealEstateOwnerName = realEstate.Owner.FullName,
-                Address = realEstate.Address,
-                Thumbnail = realEstate.ImageUrl,
+                RealEstateCode = auction.RealEstateCode,
+                RealEstateOwnerName = auction.Owner.FullName,
+                Address = auction.Address,
                 RegistrationPeriodStart = auction.RegistrationPeriodStart,
                 RegistrationPeriodEnd = auction.RegistrationPeriodEnd,
-                LegalDocuments = legalDocuments
+                LegalDocuments = legalDocuments,
+                AuctionMedias = auction.AuctionMedias
             };
 
             return new ResultResponse<AuctionPostDetailResponseDto>()

@@ -1,11 +1,13 @@
-﻿namespace BusinessObjects.Dtos.Response;
+﻿using BusinessObjects.Entities;
+
+namespace BusinessObjects.Dtos.Response;
 
 public class AuctionPostDetailResponseDto
 {
     public Guid AuctionId { get; set; }
     public string? Title { get; set; }
     public Guid RealEstateId { get; set; }
-    public string? RealEstateName { get; set; }
+    public string? RealEstateCode { get; set; }
     public string? RealEstateOwnerName { get; set; }
     
     public decimal InitialPrice { get; set; }
@@ -18,4 +20,5 @@ public class AuctionPostDetailResponseDto
     public DateTime AuctionPeriodStart { get; set; }
     public DateTime AuctionPeriodEnd { get; set; }
     public IEnumerable<GetLegalDocumentsResponseDto>? LegalDocuments { get; set; }
+    public IEnumerable<AuctionMedia>? AuctionMedias { get; set; }
 }

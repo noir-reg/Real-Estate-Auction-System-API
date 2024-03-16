@@ -18,9 +18,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IAdminService, AdminService>();
         services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
         services.AddScoped<ILegalDocumentService, LegalDocumentService>();
-        services.AddScoped<IRealEstateService, RealEstateService>();
         services.AddScoped<IBidService, BidService>();
-        services.AddScoped<IAuctionPostService, AuctionPostService>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IOwnerService, OwnerService>();
@@ -36,7 +34,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IAdminRepository, AdminRepository>();
         services.AddScoped<IBidRepository, BidRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
-        services.AddScoped<IRealEstateRepository, RealEstateRepository>();
         services.AddScoped<IRealEstateOwnerRepository, RealEstateOwnerRepository>();
         services.AddScoped<ILegalDocumentRepository, LegalDocumentRepository>();
         services.AddScoped<IStaffRepository, StaffRepository>();

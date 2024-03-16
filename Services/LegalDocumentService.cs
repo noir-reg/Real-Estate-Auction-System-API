@@ -20,7 +20,7 @@ public class LegalDocumentService : ILegalDocumentService
         _legalDocumentRepository = legalDocumentRepository;
     }
 
-    public async Task<ResultResponse<UploadDocumentsResponseDto>> UploadLegalDocuments(Guid realEstateId,
+    public async Task<ResultResponse<UploadDocumentsResponseDto>> UploadLegalDocuments(Guid auctionId,
         IFormFile file)
     {
         try
@@ -39,7 +39,7 @@ public class LegalDocumentService : ILegalDocumentService
 
             var legalDocument = new LegalDocument()
             {
-                RealEstateId = realEstateId,
+                AuctionId = auctionId,
                 FileName = objectName,
                 DocumentType = file.ContentType,
                 DocumentUrl = gcsUri,
@@ -60,7 +60,7 @@ public class LegalDocumentService : ILegalDocumentService
                     DocumentType = data.DocumentType,
                     Title = data.FileName,
                     Description = data.Description,
-                    RealEstateId = data.RealEstateId
+                    AuctionId = data.AuctionId
                 },
                 IsSuccess = true
             };
@@ -78,7 +78,7 @@ public class LegalDocumentService : ILegalDocumentService
         }
     }
 
-    public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid realEstateId,LegalDocumentQuery query)
+    public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid auctionId,LegalDocumentQuery query)
     {
         try
         {
@@ -108,7 +108,7 @@ public class LegalDocumentService : ILegalDocumentService
                 DocumentType = x.DocumentType,
                 FileName = x.FileName,
                 Description = x.Description,
-                RealEstateId = x.RealEstateId
+                AuctionId = x.AuctionId
             }).AsNoTracking().ToListAsync();
 
             var result = new ListResponseBaseDto<GetLegalDocumentsResponseDto>
@@ -156,7 +156,7 @@ public class LegalDocumentService : ILegalDocumentService
                     DocumentType = x.DocumentType,
                     FileName = x.FileName,
                     Description = x.Description,
-                    RealEstateId = x.RealEstateId
+                    AuctionId = x.AuctionId
                 }).AsNoTracking().ToListAsync();
     
                 var result = new ListResponseBaseDto<GetLegalDocumentsResponseDto>
