@@ -25,6 +25,7 @@ namespace Services
             message.From = new MailAddress(_configuration.GetValue<string>("EmailSettings:Email"));
             message.To.Add(sendMail.Email);
             message.Subject = sendMail.Subject;
+            message.IsBodyHtml = true;
             message.Body = sendMail.Body;
 
             SmtpClient client = new(_configuration.GetValue<string>("EmailSettings:Host"), _configuration.GetValue<int>("EmailSettings:Port"));
