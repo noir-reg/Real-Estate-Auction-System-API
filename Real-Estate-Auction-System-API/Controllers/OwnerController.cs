@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Real_Estate_Auction_System_API.Controllers
 {
@@ -19,20 +20,14 @@ namespace Real_Estate_Auction_System_API.Controllers
             _ownerService= ownerService;
         }
 
-        [HttpGet("pagination")]
+        [HttpGet()]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<ListResponseBaseDto<OwnerResponse>>> GetPaginationList([FromQuery] OwnerQuery request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var data = await _ownerService.GetOwnersAsync(request);
             return Ok(data);
-        }
-        [HttpGet]
-         
-        public ActionResult<List<RealEstateOwner>> GetList()
-        {
-            var result = _ownerService.GetAllOwners();
-            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<ResultResponse<OwnerResponse>>> GetDetail([FromRoute] Guid id)
@@ -44,6 +39,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<ResultResponse<AddOwnerResponseDto>>> Create([FromBody] AddOwnerRequestDto request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -53,6 +49,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Staff")]
         public async Task<ActionResult<ResultResponse<OwnerUpdateResponseDto>>> Update([FromBody] OwnerUpdateRequestDto request, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -67,6 +64,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResultResponse<DeleteStaffResponseDto>>> Delete([FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

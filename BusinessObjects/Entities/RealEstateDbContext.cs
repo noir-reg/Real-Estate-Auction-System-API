@@ -24,7 +24,8 @@ public class RealEstateDbContext : DbContext
     public virtual DbSet<Admin> Admins { get; set; }
     public virtual DbSet<Bid> Bids { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
-    public virtual DbSet<RealEstate> RealEstates { get; set; }
+    public virtual DbSet<AuctionMedia> AuctionMedias { get; set; }
+    
     public virtual DbSet<RealEstateOwner> RealEstateOwners { get; set; }
     public virtual DbSet<LegalDocument> LegalDocuments { get; set; }
 
@@ -79,76 +80,23 @@ public class RealEstateDbContext : DbContext
         {
             builder.HasKey(e => e.AuctionId);
             builder.Property(e => e.AuctionId).ValueGeneratedOnAdd();
-            
-            builder.Property(e => e.Title).IsRequired().HasMaxLength(50).HasColumnType("nvarchar");
-            
-            builder.Property(e => e.Description).IsRequired().HasColumnType("text");
-            builder.Property(e => e.Status).IsRequired()
-                .HasMaxLength(30)
-                .HasColumnType("nvarchar");
-            
-            builder.Property(e => e.IncrementalPrice).IsRequired().HasPrecision(18, 0);
-            
-            builder.Property(e => e.InitialPrice).IsRequired().HasPrecision(18, 0);
-
-            builder.HasOne(e => e.StartingBid)
-                .WithOne()
-                .HasForeignKey<Auction>(e => e.StartingBidId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasOne(e => e.CurrentBid)
-                .WithOne()
-                .HasForeignKey<Auction>(e => e.CurrentBidId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasOne(e => e.WinningBid)
-                .WithOne()
-                .HasForeignKey<Auction>(e => e.WinningBidId)
-                .OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(e => e.RealEstate)
-                .WithOne(e => e.Auction)
-                .HasForeignKey<Auction>(e => e.RealEstateId);
-            
-            builder.Property(e => e.ListingDate).IsRequired().ValueGeneratedOnAdd();
-            
-            builder.HasOne(e => e.Admin)
-                .WithOne(e => e.Auction)
-                .HasForeignKey<Auction>(e => e.AdminId)
-                .OnDelete(DeleteBehavior.NoAction)
-                .IsRequired();
-
-            builder.HasOne(e => e.Staff)
-                .WithMany(e => e.Auctions)
-                .HasForeignKey(e => e.StaffId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasIndex(e => new
-            {
-                e.RealEstateId
-            });
+            builder.Property(e => e.Title).HasMaxLength(50).IsRequired();
+            builder.Property(e => e.Description).IsRequired();
+            builder.Property(e => e.ListingDate).IsRequired();
+            builder.Property(e => e.RegistrationPeriodStart).IsRequired();
+            builder.Property(e => e.RegistrationPeriodEnd).IsRequired();
+            builder.Property(e => e.AuctionPeriodStart).IsRequired();
+            builder.Property(e => e.AuctionPeriodEnd).IsRequired();
+            builder.Property(e => e.InitialPrice).HasColumnType("decimal(18,0)").IsRequired();
+            builder.Property(e => e.IncrementalPrice).HasColumnType("decimal(18,0)").IsRequired();
+            builder.Property(e => e.RealEstateCode).HasMaxLength(20).IsRequired();
+            builder.Property(e => e.Status).HasMaxLength(30).IsRequired();
+            builder.HasOne(e => e.Admin).WithMany().HasForeignKey(e => e.AdminId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(e => e.Owner).WithMany().HasForeignKey(e => e.OwnerId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(e => e.Staff).WithMany().HasForeignKey(e => e.StaffId).OnDelete(DeleteBehavior.ClientSetNull);
         });
 
-        modelBuilder.Entity<RealEstate>(builder =>
-        {
-            builder.HasKey(e => e.RealEstateId);
-            builder.Property(e => e.RealEstateId).ValueGeneratedOnAdd();
-            
-            builder.Property(e => e.Status)
-                .HasColumnType("nvarchar")
-                .HasMaxLength(30)
-                .IsRequired();
-            
-            builder.Property(e => e.Address).HasColumnType("nvarchar").HasMaxLength(100);
-            builder.Property(e => e.Description).HasColumnType("text");
-            builder.Property(e => e.ImageUrl).HasColumnType("text");
-            builder.HasOne(e => e.Auction).WithOne(e => e.RealEstate).HasForeignKey<RealEstate>(e => e.AuctionId);
-            builder.HasOne(e => e.Owner).WithMany(e => e.RealEstates).HasForeignKey(e => e.OwnerId);
-            builder.HasIndex(e =>
-                new
-                {
-                    e.AuctionId
-                });
-        });
+      
 
         modelBuilder.Entity<AuctionRegistration>(builder =>
         {
@@ -168,11 +116,6 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
             
             builder.Property(e => e.Status).HasColumnType("nvarchar").HasMaxLength(30);
-            
-            builder.Property(e => e.PaymentMethod)
-                .HasColumnType("nvarchar")
-                .HasMaxLength(30);
-            
             builder.HasOne(e => e.Bid)
                 .WithOne(e => e.Transaction)
                 .HasForeignKey<Transaction>(e => e.TransactionId);
@@ -212,18 +155,29 @@ public class RealEstateDbContext : DbContext
             builder.Property(e => e.FileName)
                 .HasColumnType("nvarchar")
                 .HasMaxLength(100);
-            builder.HasOne(e => e.RealEstate)
+            builder.HasOne(e => e.Auction)
                 .WithMany(e => e.LegalDocuments)
-                .HasForeignKey(e => e.RealEstateId);
+                .HasForeignKey(e => e.AuctionId);
+        });
+        
+        modelBuilder.Entity<AuctionMedia>(builder =>
+        {
+            builder.HasKey(e => e.MediaId);
+            builder.Property(e => e.MediaId).ValueGeneratedOnAdd();
+            builder.Property(e => e.FileName).HasMaxLength(100).IsRequired();
+            builder.Property(e => e.FileUrl).IsRequired();
+            builder.Property(e => e.Description).IsRequired();
+            builder.Property(e => e.MediaType).HasMaxLength(100).IsRequired();
+            builder.HasOne(e => e.Auction).WithMany(e=> e.AuctionMedias).HasForeignKey(e => e.AuctionId);
         });
 
         modelBuilder.Entity<AuctionRegistration>().ToTable("AuctionRegistrations");
         modelBuilder.Entity<RealEstateOwner>().ToTable("RealEstateOwners");
         modelBuilder.Entity<Transaction>().ToTable("Transactions");
-        modelBuilder.Entity<RealEstate>().ToTable("RealEstates");
         modelBuilder.Entity<Auction>().ToTable("Auctions");
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Bid>().ToTable("Bids");
         modelBuilder.Entity<LegalDocument>().ToTable("LegalDocuments");
+        modelBuilder.Entity<AuctionMedia>().ToTable("AuctionMedias");
     }
 }

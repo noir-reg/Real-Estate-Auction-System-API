@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -22,6 +23,7 @@ public class MemberController : ControllerBase
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [Authorize(Roles = "Admin,Staff")]
     public async Task<ActionResult<ListResponseBaseDto<MemberListResponseDto>>> GetAll([FromQuery] MemberQuery request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -33,6 +35,7 @@ public class MemberController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<UpdateMemberResponseDto>>> UpdateMember(
         [FromBody] UpdateMemberRequestDto request, [FromRoute] Guid id)
     {
@@ -48,6 +51,7 @@ public class MemberController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<DeleteMemberResponseDto>>> DeleteMember([FromRoute] Guid id)
     {
         var result = await _memberService.DeleteMemberAsync(id);
@@ -62,6 +66,7 @@ public class MemberController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [Authorize]
     public async Task<ActionResult<ResultResponse<MemberDetailResponseDto>>> GetMember([FromRoute] Guid id)
     {
         var result = await _memberService.GetMemberAsync(id);

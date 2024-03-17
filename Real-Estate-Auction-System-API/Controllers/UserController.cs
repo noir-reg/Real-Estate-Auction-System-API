@@ -1,5 +1,7 @@
-﻿using BusinessObjects.Dtos.Request;
+﻿using System.Security.Claims;
+using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -17,6 +19,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Staff")]
     public async Task<ActionResult<ListResponseBaseDto<UserListResponseDto>>> GetList([FromQuery] UserQuery request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -26,6 +29,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Staff")]
     public async Task<ActionResult<UserDetailResponseDto>> GetDetail([FromRoute] Guid id)
     {
         var data = await _userService.GetUserAsync(x => x.UserId == id);
@@ -33,6 +37,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPost()]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<CreateUserResponseDto>>> CreateUser([FromBody] CreateUserRequestDto request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -41,10 +46,17 @@ public class UserController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<DeleteUserResponseDto>>> DeleteUser([FromRoute] Guid id)
     {
+        var currentId = Guid.Parse(User.FindFirst(claim => ClaimTypes.NameIdentifier.Equals(claim.Type))?.Value ?? string.Empty);
+        if (id == currentId)
+        {
+            return Unauthorized();
+        }
+        
         var data = await _userService.DeleteUserAsync(id);
-        if (data.Status == Status.NotFound)
+        if (data?.Status == Status.NotFound)
         {
             return NotFound(data);
         }

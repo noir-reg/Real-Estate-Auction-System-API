@@ -81,13 +81,13 @@ namespace Repositories
         {
             try
             {
-                var result = _context.RealEstateOwners.Include(x => x.RealEstates).Select(x => new RealEstateOwner
+                var result = _context.RealEstateOwners.Include(x => x.Auctions).Select(x => new RealEstateOwner
                 {
                     RealEstateOwnerId = x.RealEstateOwnerId,
                     FullName = x.FullName,
                     ContactInformation = x.ContactInformation,
                     CitizenId = x.CitizenId,
-                    RealEstates = x.RealEstates.ToList()
+                    Auctions = x.Auctions.ToList()
                 }).SingleOrDefaultAsync(predicate);
                 return result;
             }

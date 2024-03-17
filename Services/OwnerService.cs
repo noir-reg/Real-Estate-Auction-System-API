@@ -23,43 +23,55 @@ public class OwnerService : IOwnerService
 
     public async Task<ListResponseBaseDto<OwnerResponse>> GetOwnersAsync(OwnerQuery request)
     {
-        var offset = request.Offset;
-        var pageSize = request.PageSize;
-        var page = request.Page;
-
-        var query = _ownerRepository.GetOwnerQuery();
-
-        if (!string.IsNullOrEmpty(request.Search?.FullName))
-            query = query.Where(x => x.FullName.Contains(request.Search.FullName));
-
-        query = request.SortBy switch
+        try
         {
-            OwnerSortBy.FullName => request.OrderDirection == OrderDirection.ASC
-                ? query.OrderBy(x => x.FullName)
-                : query.OrderByDescending(x => x.FullName),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            var offset = request.Offset;
+            var pageSize = request.PageSize;
+            var page = request.Page;
 
-        var data = await query.Include(x => x.RealEstates).Select(x => new OwnerResponse
+            var query = _ownerRepository.GetOwnerQuery();
+
+            if (!string.IsNullOrEmpty(request.Search?.FullName))
+                query = query.Where(x => x.FullName.Contains(request.Search.FullName));
+
+
+            query = query.Skip(offset).Take(pageSize);
+            
+            query = request.SortBy switch
+            {
+                OwnerSortBy.FullName => request.OrderDirection == OrderDirection.ASC
+                    ? query.OrderBy(x => x.FullName)
+                    : query.OrderByDescending(x => x.FullName),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
+            
+
+            var data = await query.Include(x => x.Auctions).Select(x => new OwnerResponse
+            {
+                FullName = x.FullName,
+                CitizenId = x.CitizenId,
+                ContactInformation = x.ContactInformation,
+                RealEstateOwnerId = x.RealEstateOwnerId,
+                Auctions = x.Auctions.ToList()
+            }).ToListAsync();
+
+            var count = await _ownerRepository.GetOwnerCountAsync(request.Search);
+
+            var result = new ListResponseBaseDto<OwnerResponse>
+            {
+                Data = data,
+                Page = page,
+                PageSize = pageSize,
+                Total = count
+            };
+
+            return result;
+        }
+        catch (Exception e)
         {
-            FullName = x.FullName,
-            CitizenId = x.CitizenId,
-            ContactInformation = x.ContactInformation,
-            RealEstateOwnerId = x.RealEstateOwnerId,
-            RealEstates = x.RealEstates.ToList()                    
-        }).ToListAsync();
-
-        var count = await _ownerRepository.GetOwnerCountAsync(request.Search);
-
-        var result = new ListResponseBaseDto<OwnerResponse>
-        {
-            Data = data,
-            Page = page,
-            PageSize = pageSize,
-            Total = count
-        };
-
-        return result;
+            throw new Exception(e.Message);
+        }
     }
 
     public async Task<ResultResponse<AddOwnerResponseDto>> AddOwnerAsync(AddOwnerRequestDto request)
@@ -67,16 +79,11 @@ public class OwnerService : IOwnerService
         try
         {
             var owner = await _ownerRepository.GetOwnerAsync(x =>
-               x.CitizenId == request.CitizenId);
+                x.CitizenId == request.CitizenId);
             if (owner != null)
             {
-                var duplicatedResponse = new ResultResponse<AddOwnerResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Owner already exists" },
-                    Status = Status.Duplicate
-                };
-                return duplicatedResponse;
+                return ErrorResponse.CreateErrorResponse<AddOwnerResponseDto>(message: "Owner already exists",
+                    status: Status.Duplicate);
             }
 
 
@@ -88,9 +95,8 @@ public class OwnerService : IOwnerService
             };
 
 
-            await _ownerRepository.AddOwnerAsync(toBeAdded);
+            var addedOwner = await _ownerRepository.AddOwnerAsync(toBeAdded);
 
-            var addedOwner = await _ownerRepository.GetOwnerAsync(x => x.CitizenId.Equals(toBeAdded.CitizenId));
 
             var data = new AddOwnerResponseDto()
             {
@@ -110,50 +116,52 @@ public class OwnerService : IOwnerService
             return successResponse;
         }
         catch (Exception e)
-        {   
-            throw new Exception(e.Message);
+        {
+            return ErrorResponse.CreateErrorResponse<AddOwnerResponseDto>(e);
         }
     }
 
     public async Task<ResultResponse<OwnerUpdateResponseDto>> UpdateOwnerAsync(Guid id, OwnerUpdateRequestDto request)
     {
-        var toBeUpdated = await _ownerRepository.GetOwnerAsync(x => x.RealEstateOwnerId == id);
-
-        if (toBeUpdated is null)
+        try
         {
-            var failedResult = new ResultResponse<OwnerUpdateResponseDto>
+            var toBeUpdated = await _ownerRepository.GetOwnerAsync(x => x.RealEstateOwnerId == id);
+
+            if (toBeUpdated is null)
             {
-                IsSuccess = false,
-                Messages = new[] { "Owner not found" },
-                Status = Status.NotFound
+                return ErrorResponse.CreateErrorResponse<OwnerUpdateResponseDto>(message: "Owner not found",
+                    status: Status.NotFound);
+            }
+
+
+            toBeUpdated.FullName = request.FullName ?? toBeUpdated.FullName;
+            toBeUpdated.ContactInformation = request.ContactInformation ?? toBeUpdated.ContactInformation;
+            toBeUpdated.CitizenId = request.CitizenId ?? toBeUpdated.CitizenId;
+
+
+            await _ownerRepository.UpdateOwnerAsync(toBeUpdated);
+
+            var data = new OwnerUpdateResponseDto
+            {
+                RealEstateOwnerId = toBeUpdated.RealEstateOwnerId,
+                FullName = toBeUpdated.FullName,
+                ContactInformation = toBeUpdated.ContactInformation,
+                CitizenId = toBeUpdated.CitizenId
             };
-            return failedResult;
+
+            var successResult = new ResultResponse<OwnerUpdateResponseDto>
+            {
+                IsSuccess = true,
+                Messages = new[] { "Owner updated successfully" },
+                Status = Status.Ok,
+                Data = data
+            };
+            return successResult;
         }
-
-
-        toBeUpdated.FullName = request.FullName ?? toBeUpdated.FullName;
-        toBeUpdated.ContactInformation = request.ContactInformation ?? toBeUpdated.ContactInformation;
-        toBeUpdated.CitizenId = request.CitizenId ?? toBeUpdated.CitizenId;
-
-
-        await _ownerRepository.UpdateOwnerAsync(toBeUpdated);
-
-        var data = new OwnerUpdateResponseDto
+        catch (Exception e)
         {
-            RealEstateOwnerId = toBeUpdated.RealEstateOwnerId,
-            FullName = toBeUpdated.FullName,
-            ContactInformation = toBeUpdated.ContactInformation,
-            CitizenId = toBeUpdated.CitizenId
-        };
-
-        var successResult = new ResultResponse<OwnerUpdateResponseDto>
-        {
-            IsSuccess = true,
-            Messages = new[] { "Owner updated successfully" },
-            Status = Status.Ok,
-            Data = data
-        };
-        return successResult;
+            return ErrorResponse.CreateErrorResponse<OwnerUpdateResponseDto>(e);
+        }
     }
 
     public async Task<ResultResponse<OwnerResponse>> GetOwnerAsync(Guid id)
@@ -164,13 +172,8 @@ public class OwnerService : IOwnerService
 
             if (owner == null)
             {
-                var failedResult = new ResultResponse<OwnerResponse>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Owner not found" },
-                    Status = Status.NotFound
-                };
-                return failedResult;
+                return ErrorResponse.CreateErrorResponse<OwnerResponse>(status: Status.NotFound,
+                    message: "Owner not found");
             }
 
             var data = new OwnerResponse
@@ -179,7 +182,7 @@ public class OwnerService : IOwnerService
                 FullName = owner.FullName,
                 CitizenId = owner.CitizenId,
                 ContactInformation = owner.ContactInformation,
-                RealEstates = owner.RealEstates.ToList()
+                Auctions = owner.Auctions.ToList()
             };
 
 
@@ -194,12 +197,7 @@ public class OwnerService : IOwnerService
         }
         catch (Exception e)
         {
-            return new ResultResponse<OwnerResponse>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message },
-                Status = Status.NotFound
-            };
+            return ErrorResponse.CreateErrorResponse<OwnerResponse>(e);
         }
     }
 
@@ -209,20 +207,10 @@ public class OwnerService : IOwnerService
         {
             var toBeDeleted = await _ownerRepository.GetOwnerAsync(x => x.RealEstateOwnerId == id);
 
-            if (toBeDeleted is null) return new ResultResponse<OwnerDeleteResponse>()
+            if (toBeDeleted is null)
             {
-                Status = Status.NotFound,
-                Messages = new[] { "Staff not found" },
-                IsSuccess = false
-            };
-            if (toBeDeleted.RealEstates != null)
-            {
-                return new ResultResponse<OwnerDeleteResponse>()
-                {
-                    Status = Status.Error,
-                    Messages = new[] { "Can not delete the onwer that owns real estate " },
-                    IsSuccess = false
-                };
+                return ErrorResponse.CreateErrorResponse<OwnerDeleteResponse>(status: Status.NotFound,
+                    message: "Owner not found");
             }
 
             await _ownerRepository.DeleteOwnerAsync(toBeDeleted);
@@ -237,29 +225,24 @@ public class OwnerService : IOwnerService
                     FullName = toBeDeleted.FullName,
                     ContactInformation = toBeDeleted.ContactInformation,
                     CitizenId = toBeDeleted.CitizenId,
-
                 }
-
             };
         }
         catch (Exception e)
         {
-            return new ResultResponse<OwnerDeleteResponse>()
-            {
-                Status = Status.Error,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                IsSuccess = false
-            };
+            return ErrorResponse.CreateErrorResponse<OwnerDeleteResponse>(e);
         }
     }
+
     public List<RealEstateOwner> GetAllOwners()
     {
-        var list = _ownerRepository.GetOwnerQuery().Include(x=>x.RealEstates).Select(x=>new RealEstateOwner { 
-        RealEstateOwnerId=x.RealEstateOwnerId,
-        FullName = x.FullName,
-        ContactInformation = x.ContactInformation,
-        CitizenId=x.CitizenId,
-        RealEstates = x.RealEstates.ToList()  
+        var list = _ownerRepository.GetOwnerQuery().Include(x => x.Auctions).Select(x => new RealEstateOwner
+        {
+            RealEstateOwnerId = x.RealEstateOwnerId,
+            FullName = x.FullName,
+            ContactInformation = x.ContactInformation,
+            CitizenId = x.CitizenId,
+            Auctions = x.Auctions
         }).ToList();
         return list;
     }

@@ -65,12 +65,9 @@ public class AuthService : IAuthService
                 || x.CitizenId == dto.CitizenId || x.PhoneNumber == dto.PhoneNumber);
             if (result != null)
             {
-                var failedResult = new ResultResponse<RegisterMemberResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "User already exists" }, Status = Status.Duplicate
-                };
-                return failedResult;
+                return ErrorResponse.CreateErrorResponse<RegisterMemberResponseDto>(
+                    message: "Email or username or citizen id or phone number already exists",
+                    status: Status.Duplicate);
             }
 
 
@@ -100,12 +97,7 @@ public class AuthService : IAuthService
         }
         catch (Exception e)
         {
-            return new ResultResponse<RegisterMemberResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message,e.StackTrace,e.Source,e.InnerException?.ToString() },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<RegisterMemberResponseDto>(e);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Services;
 
 public interface ILegalDocumentService
 {
-    Task<ResultResponse<UploadDocumentsResponseDto>> UploadLegalDocuments(Guid realEstateId, IFormFile file);
+    Task<ResultResponse<UploadDocumentsResponseDto>> UploadLegalDocuments(Guid auctionId, IFormFile file);
     Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(LegalDocumentQuery query);
-    Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid realEstateId,LegalDocumentQuery query);
+    Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid auctionId,LegalDocumentQuery query);
 }

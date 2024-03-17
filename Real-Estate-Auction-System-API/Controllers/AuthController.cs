@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -24,6 +25,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("login")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
+    [AllowAnonymous]
     public async Task<ActionResult<LoginUserResponseDto>> Login([FromBody] LoginUserRequestDto request)
     {
         var userInfo = await _authService.Login(request.Email, request.Password);
@@ -55,6 +57,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<RegisterMemberResponseDto>>> Register(
         [FromBody] RegisterMemberRequestDto request)
     {

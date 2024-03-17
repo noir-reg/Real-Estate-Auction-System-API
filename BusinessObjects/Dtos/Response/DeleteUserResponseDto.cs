@@ -1,6 +1,6 @@
 ﻿using BusinessObjects.Enums;
 
-namespace Services;
+namespace BusinessObjects.Dtos.Response;
 
 public class DeleteUserResponseDto
 {

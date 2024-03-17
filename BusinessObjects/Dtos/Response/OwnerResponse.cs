@@ -13,6 +13,6 @@ namespace BusinessObjects.Dtos.Response
         public string FullName { get; set; }
         public string CitizenId { get; set; }
         public string ContactInformation { get; set; }
-        public IEnumerable<RealEstate> RealEstates { get; set; } = new List<RealEstate>();
+        public IEnumerable<Auction> Auctions { get; set; } = new List<Auction>();
     }
 }
