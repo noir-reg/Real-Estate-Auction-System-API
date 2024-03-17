@@ -38,6 +38,7 @@ public class OwnerService : IOwnerService
 
             var data = await query.Select(x => new OwnerResponse
             {
+                RealEstateOwnerId = x.RealEstateOwnerId,
                 FullName = x.FullName,
                 CitizenId = x.CitizenId,
                 ContactInformation = x.ContactInformation,
