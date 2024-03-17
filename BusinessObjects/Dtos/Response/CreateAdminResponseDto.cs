@@ -2,7 +2,7 @@
 
 namespace BusinessObjects.Dtos.Response;
 
-public class AddAdminResponseDto
+public class CreateAdminResponseDto
 {
     public Guid UserId { get; set; }
     public string Username { get; set; }

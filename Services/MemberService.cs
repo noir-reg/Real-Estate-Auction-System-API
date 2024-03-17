@@ -81,14 +81,8 @@ public class MemberService : IMemberService
 
             if (toBeUpdated == null)
             {
-                var failedResult = new ResultResponse<UpdateMemberResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Member not found" },
-                    Status = Status.NotFound
-                };
-
-                return failedResult;
+                return ErrorResponse.CreateErrorResponse<UpdateMemberResponseDto>(status: Status.NotFound,
+                    message: "Member not found");
             }
 
             toBeUpdated.Username = updateMemberRequestDto.Username ?? toBeUpdated.Username;
@@ -127,12 +121,7 @@ public class MemberService : IMemberService
         }
         catch (Exception e)
         {
-            return new ResultResponse<UpdateMemberResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<UpdateMemberResponseDto>(e);
         }
     }
 
@@ -144,13 +133,7 @@ public class MemberService : IMemberService
 
             if (toBeDeleted == null)
             {
-                var failedResult = new ResultResponse<DeleteMemberResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Member not found" },
-                    Status = Status.NotFound
-                };
-                return failedResult;
+                return ErrorResponse.CreateErrorResponse<DeleteMemberResponseDto>(status: Status.NotFound, message: "Member not found");
             }
 
             var data = new DeleteMemberResponseDto
@@ -180,12 +163,7 @@ public class MemberService : IMemberService
         }
         catch (Exception e)
         {
-            return new ResultResponse<DeleteMemberResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<DeleteMemberResponseDto>(e);
         }
     }
 
@@ -197,13 +175,7 @@ public class MemberService : IMemberService
 
             if (data == null)
             {
-                var failedResult = new ResultResponse<MemberDetailResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Member not found" },
-                    Status = Status.NotFound
-                };
-                return failedResult;
+             return ErrorResponse.CreateErrorResponse<MemberDetailResponseDto>(status:Status.NotFound,message:"Member not found"); 
             }
 
             var result = new MemberDetailResponseDto
@@ -232,12 +204,7 @@ public class MemberService : IMemberService
         }
         catch (Exception e)
         {
-            return new ResultResponse<MemberDetailResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<MemberDetailResponseDto>(e);
         }
     }
 }

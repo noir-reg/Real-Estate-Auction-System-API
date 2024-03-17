@@ -69,13 +69,8 @@ public class StaffService : IStaffService
 
             if (staff != null)
             {
-                var duplicatedResponse = new ResultResponse<AddStaffResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Staff already exists" },
-                    Status = Status.Duplicate
-                };
-                return duplicatedResponse;
+                return ErrorResponse.CreateErrorResponse<AddStaffResponseDto>(status: Status.Duplicate,
+                    message: "Staff already exists");
             }
 
 
@@ -122,59 +117,61 @@ public class StaffService : IStaffService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return ErrorResponse.CreateErrorResponse<AddStaffResponseDto>(e);
         }
     }
 
     public async Task<ResultResponse<UpdateStaffResponseDto>> UpdateStaffAsync(Guid id, UpdateStaffRequestDto request)
     {
-        var toBeUpdated = await _staffRepository.GetStaffAsync(x => x.UserId == id);
-
-        if (toBeUpdated is null)
+        try
         {
-            var failedResult = new ResultResponse<UpdateStaffResponseDto>
+            var toBeUpdated = await _staffRepository.GetStaffAsync(x => x.UserId == id);
+
+            if (toBeUpdated is null)
             {
-                IsSuccess = false,
-                Messages = new[] { "Staff not found" },
-                Status = Status.NotFound
+                return ErrorResponse.CreateErrorResponse<UpdateStaffResponseDto>(status: Status.NotFound,
+                    message: "Staff not found");
+            }
+
+
+            toBeUpdated.Username = request.Username ?? toBeUpdated.Username;
+            toBeUpdated.Email = request.Email ?? toBeUpdated.Email;
+            toBeUpdated.CitizenId = request.CitizenId ?? toBeUpdated.CitizenId;
+            toBeUpdated.DateOfBirth = request.DateOfBirth ?? toBeUpdated.DateOfBirth;
+            toBeUpdated.Gender = request.Gender ?? toBeUpdated.Gender;
+            toBeUpdated.PhoneNumber = request.PhoneNumber ?? toBeUpdated.PhoneNumber;
+            toBeUpdated.FirstName = request.FirstName ?? toBeUpdated.FirstName;
+            toBeUpdated.LastName = request.LastName ?? toBeUpdated.LastName;
+
+            await _staffRepository.UpdateStaffAsync(toBeUpdated);
+
+            var data = new UpdateStaffResponseDto
+            {
+                StaffId = toBeUpdated.UserId,
+                Username = toBeUpdated.Username,
+                Email = toBeUpdated.Email,
+                FirstName = toBeUpdated.FirstName,
+                LastName = toBeUpdated.LastName,
+                PhoneNumber = toBeUpdated.PhoneNumber,
+                DateOfBirth = toBeUpdated.DateOfBirth,
+                Gender = toBeUpdated.Gender,
+                CitizenId = toBeUpdated.CitizenId,
+                Role = toBeUpdated.Role
             };
-            return failedResult;
+
+            var successResult = new ResultResponse<UpdateStaffResponseDto>
+            {
+                IsSuccess = true,
+                Messages = new[] { "Staff updated successfully" },
+                Status = Status.Ok,
+                Data = data
+            };
+            return successResult;
         }
-
-
-        toBeUpdated.Username = request.Username ?? toBeUpdated.Username;
-        toBeUpdated.Email = request.Email ?? toBeUpdated.Email;
-        toBeUpdated.CitizenId = request.CitizenId ?? toBeUpdated.CitizenId;
-        toBeUpdated.DateOfBirth = request.DateOfBirth ?? toBeUpdated.DateOfBirth;
-        toBeUpdated.Gender = request.Gender ?? toBeUpdated.Gender;
-        toBeUpdated.PhoneNumber = request.PhoneNumber ?? toBeUpdated.PhoneNumber;
-        toBeUpdated.FirstName = request.FirstName ?? toBeUpdated.FirstName;
-        toBeUpdated.LastName = request.LastName ?? toBeUpdated.LastName;
-
-        await _staffRepository.UpdateStaffAsync(toBeUpdated);
-
-        var data = new UpdateStaffResponseDto
+        catch (Exception e)
         {
-            StaffId = toBeUpdated.UserId,
-            Username = toBeUpdated.Username,
-            Email = toBeUpdated.Email,
-            FirstName = toBeUpdated.FirstName,
-            LastName = toBeUpdated.LastName,
-            PhoneNumber = toBeUpdated.PhoneNumber,
-            DateOfBirth = toBeUpdated.DateOfBirth,
-            Gender = toBeUpdated.Gender,
-            CitizenId = toBeUpdated.CitizenId,
-            Role = toBeUpdated.Role
-        };
-
-        var successResult = new ResultResponse<UpdateStaffResponseDto>
-        {
-            IsSuccess = true,
-            Messages = new[] { "Staff updated successfully" },
-            Status = Status.Ok,
-            Data = data
-        };
-        return successResult;
+            return ErrorResponse.CreateErrorResponse<UpdateStaffResponseDto>(e);
+        }
     }
 
     public async Task<ResultResponse<StaffDetailResponseDto>> GetStaffAsync(Guid id)
@@ -185,13 +182,7 @@ public class StaffService : IStaffService
 
             if (staff == null)
             {
-                var failedResult = new ResultResponse<StaffDetailResponseDto>
-                {
-                    IsSuccess = false,
-                    Messages = new[] { "Staff not found" },
-                    Status = Status.NotFound
-                };
-                return failedResult;
+               return ErrorResponse.CreateErrorResponse<StaffDetailResponseDto>(status:Status.NotFound,message:"Staff not found"); 
             }
 
             var data = new StaffDetailResponseDto
@@ -221,13 +212,7 @@ public class StaffService : IStaffService
         }
         catch (Exception e)
         {
-            return new ResultResponse<StaffDetailResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message },
-                Status = Status.NotFound
-
-            };
+            return ErrorResponse.CreateErrorResponse<StaffDetailResponseDto>(e);
         }
     }
 
@@ -237,13 +222,8 @@ public class StaffService : IStaffService
         {
             var toBeDeleted = await _staffRepository.GetStaffAsync(x => x.UserId == id);
 
-            if (toBeDeleted is null) return new ResultResponse<DeleteStaffResponseDto>()
-            {
-                Status = Status.NotFound,
-                Messages = new[] { "Staff not found" },
-                IsSuccess = false
-            };
-           
+            if (toBeDeleted is null)
+              return ErrorResponse.CreateErrorResponse<DeleteStaffResponseDto>(status:Status.NotFound,message:"Staff not found"); 
 
             await _staffRepository.DeleteStaffAsync(toBeDeleted);
             return new ResultResponse<DeleteStaffResponseDto>()
@@ -264,17 +244,11 @@ public class StaffService : IStaffService
                     CitizenId = toBeDeleted.CitizenId,
                     Role = toBeDeleted.Role
                 }
-
             };
         }
         catch (Exception e)
         {
-            return new ResultResponse<DeleteStaffResponseDto>()
-            {
-                Status = Status.Error,
-                Messages = new[] { e.Message,e.InnerException?.Message },
-                IsSuccess = false
-            };
+            return ErrorResponse.CreateErrorResponse<DeleteStaffResponseDto>(e);
         }
     }
 }

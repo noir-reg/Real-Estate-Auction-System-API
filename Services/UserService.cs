@@ -100,11 +100,8 @@ public class UserService : IUserService
             var toBeDeleted = await _userRepository.GetUserAsync(x => x.UserId == id);
             if (toBeDeleted == null)
             {
-                return new ResultResponse<DeleteUserResponseDto>()
-                {
-                    Status = Status.NotFound,
-                    Messages = new[] { "User not found" }, IsSuccess = false
-                };
+                return ErrorResponse.CreateErrorResponse<DeleteUserResponseDto>(status: Status.NotFound,
+                    message: "User not found");
             }
 
             await _userRepository.DeleteAsync(toBeDeleted);
@@ -129,11 +126,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new ResultResponse<DeleteUserResponseDto>()
-            {
-                Status = Status.Error,
-                Messages = new[] { e.Message }, IsSuccess = false
-            };
+            return ErrorResponse.CreateErrorResponse<DeleteUserResponseDto>(e);
         }
     }
 
@@ -144,12 +137,7 @@ public class UserService : IUserService
             var toBeUpdated = await _userRepository.GetUserAsync(x => x.UserId == id);
             if (toBeUpdated == null)
             {
-                return new ResultResponse<UpdateUserResponseDto>()
-                {
-                    Status = Status.NotFound,
-                    Messages = new[] { "User not found" },
-                    IsSuccess = false
-                };
+                return ErrorResponse.CreateErrorResponse<UpdateUserResponseDto>(status: Status.NotFound, message: "User not found");
             }
             
             toBeUpdated.Username = !string.IsNullOrEmpty(request.Username) ? request.Username : toBeUpdated.Username;
@@ -185,7 +173,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return ErrorResponse.CreateErrorResponse<UpdateUserResponseDto>(e);
         }
     }
 
@@ -198,12 +186,7 @@ public class UserService : IUserService
                 x.PhoneNumber == request.PhoneNumber);
             if (existed != null)
             {
-                return new ResultResponse<CreateUserResponseDto>()
-                {
-                    Status = Status.Duplicate,
-                    Messages = new[] { "User already existed" },
-                    IsSuccess = false
-                };
+              return ErrorResponse.CreateErrorResponse<CreateUserResponseDto>(status:Status.Duplicate,message:"User already exists"); 
             }
 
             User data = await CreateUserBasedOnRoleAsync(request);
@@ -218,12 +201,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return new ResultResponse<CreateUserResponseDto>()
-            {
-                Status = Status.Error,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                IsSuccess = false
-            };
+            return ErrorResponse.CreateErrorResponse<CreateUserResponseDto>(e);
         }
     }
 

@@ -71,20 +71,21 @@ public class AdminService : IAdminService
         }
     }
 
-    public async Task<ResultResponse<AddAdminResponseDto>> AddAdminAsync(AddAdminRequestDto request)
+    public async Task<ResultResponse<CreateAdminResponseDto>> AddAdminAsync(AddAdminRequestDto request)
     {
         try
         {
-            var existingAdmin = await _adminRepository.GetAdminAsync(x => x.Email == request.Email || x.CitizenId == request.CitizenId || x.PhoneNumber == request.PhoneNumber);
+            var existingAdmin = await _adminRepository.GetAdminAsync(x =>
+                x.Email == request.Email || x.CitizenId == request.CitizenId || x.PhoneNumber == request.PhoneNumber);
 
             if (existingAdmin != null)
-                return new ResultResponse<AddAdminResponseDto>()
+                return new ResultResponse<CreateAdminResponseDto>()
                 {
                     IsSuccess = false,
                     Messages = new[] { "Admin already exists" },
                     Status = Status.Duplicate
-                }; 
-            
+                };
+
             var admin = new Admin
             {
                 Username = request.Username,
@@ -97,15 +98,15 @@ public class AdminService : IAdminService
                 LastName = request.LastName,
                 Password = request.Password
             };
-            
+
             var data = await _adminRepository.AddAdminAsync(admin);
-            
-            return new ResultResponse<AddAdminResponseDto>()
+
+            return new ResultResponse<CreateAdminResponseDto>()
             {
                 IsSuccess = true,
                 Messages = new[] { "Add successfully" },
                 Status = Status.Ok,
-                Data = new AddAdminResponseDto
+                Data = new CreateAdminResponseDto
                 {
                     UserId = data.UserId,
                     Username = data.Username,
@@ -117,19 +118,12 @@ public class AdminService : IAdminService
                     Gender = data.Gender,
                     CitizenId = data.CitizenId,
                     Role = data.Role
-                    
                 }
             };
-
         }
         catch (Exception e)
         {
-            return new ResultResponse<AddAdminResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<CreateAdminResponseDto>(e);
         }
     }
 
@@ -139,26 +133,26 @@ public class AdminService : IAdminService
         {
             var toBeUpdated = await _adminRepository.GetAdminAsync(x => x.UserId == id);
 
-            if (toBeUpdated == null) return new ResultResponse<UpdateAdminResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { "Admin not found" },
-                Status = Status.NotFound
-            };
-            
-           
+            if (toBeUpdated == null)
+                return ErrorResponse.CreateErrorResponse<UpdateAdminResponseDto>(status: Status.NotFound,
+                    message: "Admin not found");
+
 
             toBeUpdated.Username = !string.IsNullOrEmpty(request.Username) ? request.Username : toBeUpdated.Username;
-            toBeUpdated.FirstName = !string.IsNullOrEmpty(request.FirstName) ? request.FirstName : toBeUpdated.FirstName;
+            toBeUpdated.FirstName =
+                !string.IsNullOrEmpty(request.FirstName) ? request.FirstName : toBeUpdated.FirstName;
             toBeUpdated.LastName = !string.IsNullOrEmpty(request.LastName) ? request.LastName : toBeUpdated.LastName;
-            toBeUpdated.CitizenId = !string.IsNullOrEmpty(request.CitizenId) ? request.CitizenId : toBeUpdated.CitizenId;
+            toBeUpdated.CitizenId =
+                !string.IsNullOrEmpty(request.CitizenId) ? request.CitizenId : toBeUpdated.CitizenId;
             toBeUpdated.DateOfBirth = request.DateOfBirth ?? toBeUpdated.DateOfBirth;
             toBeUpdated.Email = !string.IsNullOrEmpty(request.Email) ? request.Email : toBeUpdated.Email;
-            toBeUpdated.PhoneNumber = !string.IsNullOrEmpty(request.PhoneNumber) ? request.PhoneNumber : toBeUpdated.PhoneNumber;
+            toBeUpdated.PhoneNumber = !string.IsNullOrEmpty(request.PhoneNumber)
+                ? request.PhoneNumber
+                : toBeUpdated.PhoneNumber;
             toBeUpdated.Gender = request.Gender ?? toBeUpdated.Gender;
-            
+
             await _adminRepository.UpdateAdminAsync(toBeUpdated);
-            
+
             return new ResultResponse<UpdateAdminResponseDto>()
             {
                 IsSuccess = true,
@@ -181,7 +175,7 @@ public class AdminService : IAdminService
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            return ErrorResponse.CreateErrorResponse<UpdateAdminResponseDto>(e);
         }
     }
 
@@ -190,15 +184,11 @@ public class AdminService : IAdminService
         try
         {
             var toBeDeleted = await _adminRepository.GetAdminAsync(x => x.UserId == id);
-            if (toBeDeleted == null) return new ResultResponse<DeleteAdminResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { "Admin not found" },
-                Status = Status.NotFound
-            };
+            if (toBeDeleted == null)
+             return ErrorResponse.CreateErrorResponse<DeleteAdminResponseDto>(status:Status.NotFound,message:"Admin not found"); 
 
             await _adminRepository.DeleteAdminAsync(toBeDeleted);
-            
+
             return new ResultResponse<DeleteAdminResponseDto>()
             {
                 IsSuccess = true,
@@ -221,12 +211,7 @@ public class AdminService : IAdminService
         }
         catch (Exception e)
         {
-            return new ResultResponse<DeleteAdminResponseDto>()
-            {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+            return ErrorResponse.CreateErrorResponse<DeleteAdminResponseDto>(e);
         }
     }
 }

@@ -27,11 +27,11 @@ namespace Services
             {
                 var toBeAdded = new Bid()
                 {
-                    Date = request.Date,
+                    Date = DateTime.Now,
                     Amount = request.Amount,
                     AuctionId = request.AuctionId,
                     MemberId = request.MemberId,
-                    IsWinningBid = request.IsWinningBid
+                    IsWinningBid = false
                 };
 
                 Bid result = await _bidRepository.AddBidAsync(toBeAdded);
@@ -56,12 +56,7 @@ namespace Services
             }
             catch (Exception e)
             {
-                return new ResultResponse<CreateBidResponseDto>()
-                {
-                    IsSuccess = false,
-                    Messages = new[] { e.Message },
-                    Status = Status.Error
-                };
+                return ErrorResponse.CreateErrorResponse<CreateBidResponseDto>(e);
             }
         }
 
@@ -106,12 +101,7 @@ namespace Services
             }
             catch (Exception e)
             {
-                return new ResultResponse<GetBidResponseDto>()
-                {
-                    IsSuccess = false,
-                    Messages = new[] { e.Message, e.InnerException?.Message },
-                    Status = Status.Error
-                };
+                return ErrorResponse.CreateErrorResponse<GetBidResponseDto>(e);
             }
         }
 
@@ -140,7 +130,7 @@ namespace Services
                 return new ListResponseBaseDto<GetBidResponseDto>
                 {
                     Data = data,
-                    Total = data.Count(),
+                    Total = await query.CountAsync(),
                     PageSize = request.PageSize,
                     Page = request.Page
                 };

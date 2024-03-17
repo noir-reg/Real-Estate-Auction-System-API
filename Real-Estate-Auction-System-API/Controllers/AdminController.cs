@@ -32,7 +32,7 @@ public class AdminController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ResultResponse<AddAdminResponseDto>>> AddAdminAsync(
+    public async Task<ActionResult<ResultResponse<CreateAdminResponseDto>>> AddAdminAsync(
         [FromBody] AddAdminRequestDto request)
     {
         if (!ModelState.IsValid)
