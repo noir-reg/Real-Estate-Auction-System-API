@@ -126,9 +126,8 @@ public class AuctionService : IAuctionService
             var query = _auctionRepository.GetAuctionQuery();
 
             {
-                query = query.Where(predicate: string.IsNullOrEmpty(request.Search?.Title)
-                    ? x => x.Title.Contains(request.Search.Title)
-                    : null);
+                if (!string.IsNullOrEmpty(request.Search?.Title))
+                    query = query.Where(x => x.Title.Contains(request.Search.Title));
 
                 query = query.OrderBy(x => x.Title);
                 query = query.Skip(request.Offset).Take(request.PageSize);
