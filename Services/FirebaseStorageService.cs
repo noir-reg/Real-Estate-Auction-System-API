@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 using Microsoft.Extensions.Configuration;
 
@@ -21,8 +22,15 @@ public class FirebaseStorageService : IFirebaseStorageService
         try
         {
             await using var fileStream = File.OpenRead(filePath);
-          
+
             await _storageClient.UploadObjectAsync(_bucketName, objectName, contentType, fileStream);
+
+            var objectAcl = new ObjectAccessControl
+            {
+                Role = "READER",
+                Entity = "allUsers"
+            };
+
             return $"gs://{_bucketName}/{objectName}";
         }
         catch (Exception e)
@@ -44,5 +52,15 @@ public class FirebaseStorageService : IFirebaseStorageService
         {
             throw new Exception(e.Message);
         }
+    }
+
+    public async Task<string> GetDownloadUrlAsync(string objectName)
+    {
+        var objectInfo = await _storageClient.GetObjectAsync(_bucketName, objectName);
+        await _storageClient.UpdateObjectAsync(objectInfo, options: new UpdateObjectOptions()
+        {
+            PredefinedAcl = PredefinedObjectAcl.PublicRead
+        });
+        return objectInfo.MediaLink;
     }
 }

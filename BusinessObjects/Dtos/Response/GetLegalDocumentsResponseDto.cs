@@ -8,4 +8,5 @@ public class GetLegalDocumentsResponseDto
     public string? Description { get; set; }
     public string? DocumentType { get; set; }
     public Guid AuctionId { get; set; }
+    public string DownloadUrl { get; set; }
 }

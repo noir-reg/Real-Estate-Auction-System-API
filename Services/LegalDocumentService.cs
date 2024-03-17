@@ -73,7 +73,63 @@ public class LegalDocumentService : ILegalDocumentService
         }
     }
 
-    public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid auctionId,LegalDocumentQuery query)
+    public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(Guid auctionId,
+        LegalDocumentQuery query)
+    {
+        try
+        {
+            var queryable = _legalDocumentRepository.GetLegalDocumentQuery();
+
+            Expression<Func<LegalDocument, bool>> expression = x => x.FileName.Contains(query.FileName);
+
+
+            queryable = queryable.Where(expression);
+
+            queryable = query.SortBy switch
+            {
+                LegalDocumentSortBy.FileName => query.OrderDirection == OrderDirection.ASC
+                    ? queryable.OrderBy(x => x.FileName)
+                    : queryable.OrderByDescending(x => x.FileName),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+
+            queryable = queryable.Skip(query.Offset).Take(query.PageSize);
+
+            var legalDocuments = await queryable.ToListAsync();
+            var data = new List<GetLegalDocumentsResponseDto>();
+            foreach (var legalDocument in legalDocuments)
+            {
+                var downloadUrl = await _firebaseStorageService.GetDownloadUrlAsync(legalDocument.FileName);
+                data.Add(new()
+                {
+                    DocumentId = legalDocument.DocumentId,
+                    DocumentType = legalDocument.DocumentType,
+                    FileName = legalDocument.FileName,
+                    Description = legalDocument.Description,
+                    AuctionId = legalDocument.AuctionId,
+                    DownloadUrl = downloadUrl
+                });
+            }
+
+
+            var result = new ListResponseBaseDto<GetLegalDocumentsResponseDto>
+            {
+                Data = data,
+                Total = await _legalDocumentRepository.GetCount(expression),
+                PageSize = query.PageSize,
+                Page = query.Page
+            };
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(LegalDocumentQuery query)
     {
         try
         {
@@ -113,7 +169,7 @@ public class LegalDocumentService : ILegalDocumentService
                 PageSize = query.PageSize,
                 Page = query.Page
             };
-            
+
             return result;
         }
         catch (Exception e)
@@ -121,52 +177,4 @@ public class LegalDocumentService : ILegalDocumentService
             throw new Exception(e.Message);
         }
     }
-     public async Task<ListResponseBaseDto<GetLegalDocumentsResponseDto>> GetLegalDocuments(LegalDocumentQuery query)
-        {
-            try
-            {
-                var queryable = _legalDocumentRepository.GetLegalDocumentQuery();
-    
-                Expression<Func<LegalDocument, bool>> expression = x => x.FileName.Contains(query.FileName);
-    
-    
-                queryable = queryable.Where(expression);
-    
-                queryable = query.SortBy switch
-                {
-                    LegalDocumentSortBy.FileName => query.OrderDirection == OrderDirection.ASC
-                        ? queryable.OrderBy(x => x.FileName)
-                        : queryable.OrderByDescending(x => x.FileName),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-    
-    
-                queryable = queryable.Skip(query.Offset).Take(query.PageSize);
-    
-                var data = await queryable.Select(x => new GetLegalDocumentsResponseDto
-    
-                {
-                    DocumentId = x.DocumentId,
-                    DocumentUrl = x.DocumentUrl,
-                    DocumentType = x.DocumentType,
-                    FileName = x.FileName,
-                    Description = x.Description,
-                    AuctionId = x.AuctionId
-                }).AsNoTracking().ToListAsync();
-    
-                var result = new ListResponseBaseDto<GetLegalDocumentsResponseDto>
-                {
-                    Data = data,
-                    Total = await _legalDocumentRepository.GetCount(expression),
-                    PageSize = query.PageSize,
-                    Page = query.Page
-                };
-                
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
 }

@@ -52,41 +52,26 @@ public class AuctionController : ControllerBase
     }
 
     [HttpPost("{auctionId}/legal-documents")]
+    [Consumes(FileTypes.PNG, FileTypes.JPEG, FileTypes.PDF, FileTypes.XLSX, FileTypes.XLS, FileTypes.DOC,
+        FileTypes.DOCX)]
+    [RequestFormLimits(ValueLengthLimit = (int)FileChecker.FILE_SIZE_LIMIT,
+        MultipartBodyLengthLimit = FileChecker.FILE_SIZE_LIMIT)]
     [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UploadDocumentsResponseDto>>> UploadDocuments(
         [FromRoute] Guid auctionId, IFormFile file)
     {
-        var fileTypeChecker = new FileTypeChecker();
-        if (!fileTypeChecker.IsValidFileType(file.ContentType))
-        {
-            return BadRequest();
-        }
-
-        if (file.Length > FileChecker.FILE_SIZE_LIMIT)
-        {
-            return BadRequest();
-        }
-
         var result = await _legalDocumentService.UploadLegalDocuments(auctionId, file);
         return Ok(result);
     }
 
     [HttpPost("{auctionId}/auction-medias")]
+    [Consumes(FileTypes.PNG, FileTypes.JPEG)]
+    [RequestFormLimits(ValueLengthLimit = (int)FileChecker.FILE_SIZE_LIMIT,
+        MultipartBodyLengthLimit = FileChecker.FILE_SIZE_LIMIT)]
     [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UploadMediaResponseDto>>> UploadMedia(
         [FromRoute] Guid auctionId, IFormFile file)
     {
-        var fileTypeChecker = new FileTypeChecker();
-        if (!fileTypeChecker.IsValidFileType(file.ContentType))
-        {
-            return BadRequest();
-        }
-
-        if (file.Length > FileChecker.FILE_SIZE_LIMIT)
-        {
-            return BadRequest();
-        }
-
         ResultResponse<UploadMediaResponseDto> result = await _auctionMediaService.UploadMedia(auctionId, file);
         return Ok(result);
     }
@@ -125,7 +110,7 @@ public class AuctionController : ControllerBase
     public async Task<ActionResult<ResultResponse<DeleteAuctionResponseDto>>> DeleteAuction(
         [FromRoute] Guid auctionId)
     {
-       ResultResponse<DeleteAuctionResponseDto> result = await _auctionService.DeleteAuction(auctionId); 
+        ResultResponse<DeleteAuctionResponseDto> result = await _auctionService.DeleteAuction(auctionId);
         return Ok(result);
     }
 }

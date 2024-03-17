@@ -91,22 +91,31 @@ public class AuctionMediaService : IAuctionMediaService
 
             queryable = queryable.Where(predicate);
             queryable = queryable.Skip(query.Offset).Take(query.PageSize);
-            
+
+            var mediaList = await queryable.ToListAsync();
+            var data = new List<GetAuctionMediasResponseDto>();
+            foreach (var media in mediaList)
+            {
+                var downloadUrl = await _firebaseStorageService.GetDownloadUrlAsync(media.FileName);
+                data.Add(new GetAuctionMediasResponseDto
+                {
+                    MediaId = media.MediaId,
+                    FileName = media.FileName,
+                    MediaType = media.MediaType,
+                    Description = media.Description,
+                    DownloadUrl = downloadUrl
+                });
+            }
+
             var result = new ListResponseBaseDto<GetAuctionMediasResponseDto>
             {
-                Data = await queryable
-                    .Select(x => new GetAuctionMediasResponseDto
-                    {
-                        MediaId = x.MediaId,
-                        FileName = x.FileName,
-                        FileUrl = x.FileUrl,
-                        MediaType = x.MediaType,
-                        Description = x.Description
-                    }).ToListAsync(),
-                Total = await _auctionMediaRepository.Count(predicate)
+                Data = data,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                Total = await queryable.CountAsync() 
             };
-            return result;
 
+            return result;
         }
         catch (Exception e)
         {
@@ -123,4 +132,6 @@ public class GetAuctionMediasResponseDto
     public string FileUrl { get; set; }
     public string MediaType { get; set; }
     public string Description { get; set; }
+
+    public string DownloadUrl { get; set; }
 }
