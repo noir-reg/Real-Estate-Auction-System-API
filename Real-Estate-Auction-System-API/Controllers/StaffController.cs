@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -17,6 +18,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Staff")]
     public async Task<ActionResult<ListResponseBaseDto<StaffListResponseDto>>> GetList([FromQuery] StaffQuery request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -26,6 +28,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Staff")]
     public async Task<ActionResult<ResultResponse<StaffDetailResponseDto>>> GetDetail([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -35,29 +38,33 @@ public class StaffController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles ="Admin")]
     public async Task<ActionResult<ResultResponse<AddStaffResponseDto>>> Create([FromBody] AddStaffRequestDto request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-       var result = await _staffService.AddStaffAsync(request);
+        var result = await _staffService.AddStaffAsync(request);
         return Ok(result);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<ResultResponse<UpdateStaffResponseDto>>> Update([FromBody] UpdateStaffRequestDto request, [FromRoute] Guid id)
+    [Authorize(Roles ="Admin")]
+    public async Task<ActionResult<ResultResponse<UpdateStaffResponseDto>>> Update(
+        [FromBody] UpdateStaffRequestDto request, [FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-       var result = await _staffService.UpdateStaffAsync(id, request);
+        var result = await _staffService.UpdateStaffAsync(id, request);
 
-       if (result.Status == Status.NotFound)
-       {
-           return NotFound(result);
-       }
-       
+        if (result.Status == Status.NotFound)
+        {
+            return NotFound(result);
+        }
+
         return Ok(result);
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles ="Admin")]
     public async Task<ActionResult<ResultResponse<DeleteStaffResponseDto>>> Delete([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

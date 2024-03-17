@@ -1,6 +1,8 @@
 ﻿using BusinessObjects.Constants;
 using BusinessObjects.Dtos.Request;
 using BusinessObjects.Dtos.Response;
+using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -23,6 +25,7 @@ public class AuctionController : ControllerBase
 
     
     [HttpPost()]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<CreateAuctionResponseDto>>> CreateAuction([FromBody] CreateAuctionRequestDto request)
     {
         var response = await _auctionService.CreateAuction(request);
@@ -30,6 +33,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<AuctionPostDetailResponseDto>>> GetAuctionById([FromRoute] Guid id)
     {
         var response = await _auctionService.GetAuctionById(id);
@@ -37,6 +41,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<AuctionPostListResponseDto>>> GetAuctions([FromQuery] AuctionQuery request)
     {
        ListResponseBaseDto<AuctionPostListResponseDto> response = await _auctionService.GetAuctions(request);
@@ -44,6 +49,7 @@ public class AuctionController : ControllerBase
     }
     
     [HttpPost("{auctionId}/legal-documents")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<UploadDocumentsResponseDto>>> UploadDocuments(
         [FromRoute] Guid auctionId, IFormFile file)
     {
@@ -63,6 +69,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpPost("{auctionId}/auction-medias")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResultResponse<UploadMediaResponseDto>>> UploadMedia(
         [FromRoute] Guid auctionId, IFormFile file)
     {
@@ -83,6 +90,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpGet("{auctionId}/legal-documents")]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<GetLegalDocumentsResponseDto>>> GetLegalDocuments(
         [FromRoute] Guid auctionId,
         [FromQuery] LegalDocumentQuery query)
@@ -93,6 +101,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpGet("{auctionId}/auction-medias")]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<GetAuctionMediasResponseDto>>> GetAuctionMedias(
         [FromRoute] Guid auctionId,[FromQuery] AuctionMediaQuery query)
     {

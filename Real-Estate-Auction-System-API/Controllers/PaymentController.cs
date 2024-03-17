@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Dtos.Request;
+using BusinessObjects.Dtos.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -15,7 +16,7 @@ namespace Real_Estate_Auction_System_API.Controllers
             _paymentService = paymentService;
         }
         [HttpPost]
-        public IActionResult Processpayment([FromBody] PaymentRequest paymentRequest)
+        public ActionResult<PaymentResponse> ProcessPayment([FromBody] PaymentRequest paymentRequest)
         {
             var result = _paymentService.ProcessPayment(paymentRequest);
             if (result.isSuccess)
