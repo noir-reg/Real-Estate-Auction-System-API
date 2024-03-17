@@ -49,12 +49,12 @@ public class AuctionService : IAuctionService
                     Status = data.Status,
                     Description = data.Description,
                     RealEstateCode = data.RealEstateCode,
-                    RegistrationPeriodStart = data.RegistrationPeriodStart,
-                    RegistrationPeriodEnd = data.RegistrationPeriodEnd,
+                    RegistrationPeriodStart = data.RegistrationPeriodStart.ToString(),
+                    RegistrationPeriodEnd = data.RegistrationPeriodEnd.ToString(),
                     InitialPrice = data.InitialPrice,
-                    ListingDate = data.ListingDate,
-                    AuctionPeriodStart = data.AuctionPeriodStart,
-                    AuctionPeriodEnd = data.AuctionPeriodEnd,
+                    ListingDate = data.ListingDate.ToString(),
+                    AuctionPeriodStart = data.AuctionPeriodStart.ToString(),
+                    AuctionPeriodEnd = data.AuctionPeriodEnd.ToString(),
                     IncrementalPrice = data.IncrementalPrice,
                     ThumbnailUrl = data.ThumbnailUrl
                 },
@@ -96,8 +96,8 @@ public class AuctionService : IAuctionService
                 IncrementalPrice = x.IncrementalPrice,
                 ThumbnailUrl = x.ThumbnailUrl,
                 Owner = x.Owner,
-                AuctionMedias = x.AuctionMedias,
-                LegalDocuments = x.LegalDocuments
+                AuctionMedias = x.AuctionMedias.ToList(),
+                LegalDocuments = x.LegalDocuments.ToList()
             }).SingleOrDefaultAsync();
 
             if (data == null)

@@ -15,18 +15,22 @@ public class CreateAuctionRequestDto
 
 
     [Required(ErrorMessage = "RegistrationPeriodEnd is required")]
+    [DataType(DataType.Date)]
     public DateTime RegistrationPeriodEnd { get; set; }
 
     [Required(ErrorMessage = "RegistrationPeriodStart is required")]
+    [DataType(DataType.Date)]
     public DateTime RegistrationPeriodStart { get; set; }
 
     [Required(ErrorMessage = "InitialPrice is required")]
     public decimal InitialPrice { get; set; }
 
     [Required(ErrorMessage = "AuctionPeriodStart is required")]
+    [DataType(DataType.Date)]
     public DateTime AuctionPeriodStart { get; set; }
 
     [Required(ErrorMessage = "AuctionPeriodEnd is required")]
+    [DataType(DataType.Date)]
     public DateTime AuctionPeriodEnd { get; set; }
 
     [Required(ErrorMessage = "IncrementalPrice is required")]
