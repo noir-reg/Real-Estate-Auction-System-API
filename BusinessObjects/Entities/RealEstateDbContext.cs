@@ -148,7 +148,6 @@ public class RealEstateDbContext : DbContext
                 x.AuctionId
             });
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
-            builder.Property(e => e.IsWinningBid).IsRequired();
         });
 
         modelBuilder.Entity<LegalDocument>(builder =>

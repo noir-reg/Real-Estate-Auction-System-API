@@ -13,7 +13,6 @@ namespace BusinessObjects.Dtos.Response
             public DateTime Date { get; set; }
             public Guid MemberId { get; set; }
             public Guid AuctionId { get; set; }
-            public bool IsWinningBid { get; set; }
         
     }
 }

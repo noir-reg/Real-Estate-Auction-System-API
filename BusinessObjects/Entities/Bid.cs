@@ -9,6 +9,5 @@ public class Bid
     public Member Member { get; set; }
     public Guid AuctionId { get; set; }
     public Auction Auction { get; set; }
-    public bool IsWinningBid { get; set; }
     public Transaction Transaction { get; set; }
 }

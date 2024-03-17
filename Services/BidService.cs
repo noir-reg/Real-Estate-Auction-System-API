@@ -31,7 +31,6 @@ namespace Services
                     Amount = request.Amount,
                     AuctionId = request.AuctionId,
                     MemberId = request.MemberId,
-                    IsWinningBid = false
                 };
 
                 Bid result = await _bidRepository.AddBidAsync(toBeAdded);
@@ -43,7 +42,6 @@ namespace Services
                     Amount = result.Amount,
                     AuctionId = result.AuctionId,
                     MemberId = result.MemberId,
-                    IsWinningBid = result.IsWinningBid
                 };
 
                 return new ResultResponse<CreateBidResponseDto>
@@ -72,7 +70,6 @@ namespace Services
                     Amount = x.Amount,
                     AuctionId = x.AuctionId,
                     MemberId = x.MemberId,
-                    IsWinningBid = x.IsWinningBid,
                     Auction = x.Auction,
                     Member = x.Member,
                     Transaction = x.Transaction
@@ -119,7 +116,6 @@ namespace Services
                          Amount = x.Amount,
                          AuctionId = x.AuctionId,
                          MemberId = x.MemberId,
-                         IsWinningBid = x.IsWinningBid,
                          Auction=x.Auction,
                          Member=x.Member,
                          Transaction=x.Transaction
