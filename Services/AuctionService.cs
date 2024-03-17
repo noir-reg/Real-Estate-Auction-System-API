@@ -140,6 +140,7 @@ public class AuctionService : IAuctionService
                         InitialPrice = x.InitialPrice,
                         Thumbnail = x.ThumbnailUrl!,
                         AuctionStart = x.AuctionPeriodStart,
+                        Status = x.Status
                     }
                 ).ToListAsync();
 
