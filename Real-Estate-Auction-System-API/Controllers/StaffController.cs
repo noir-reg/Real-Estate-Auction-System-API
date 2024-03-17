@@ -18,7 +18,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Staff")]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<StaffListResponseDto>>> GetList([FromQuery] StaffQuery request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -28,7 +28,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Staff")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<StaffDetailResponseDto>>> GetDetail([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

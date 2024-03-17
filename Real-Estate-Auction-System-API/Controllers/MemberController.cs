@@ -23,7 +23,7 @@ public class MemberController : ControllerBase
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-    [Authorize(Roles = "Admin,Staff")]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<MemberListResponseDto>>> GetAll([FromQuery] MemberQuery request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

@@ -22,21 +22,24 @@ public class BidController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<GetBidResponseDto>>> GetBids([FromQuery] BaseQueryDto request)
     {
+      
         var result = await _bidService.GetBids(request);
         return Ok(result);
     }
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ActionResult<ResultResponse<CreateBidResponseDto>>> CreateBid(
+    public async Task<ActionResult<ResultResponse<CreateBidResponseDto>>> CreateBid([FromBody]
         CreateBidRequestDto request)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState); 
+        
         ResultResponse<CreateBidResponseDto> result = await _bidService.CreateBid(request);
         return Ok(result);
     }
     [HttpGet("{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ResultResponse<GetBidResponseDto>>> GetBidById(Guid id)
+    public async Task<ActionResult<ResultResponse<GetBidResponseDto>>> GetBidById([FromRoute]Guid id)
     {
         ResultResponse<GetBidResponseDto> result = await _bidService.GetBidById(id);
         if (result.Status == Status.NotFound)

@@ -82,6 +82,11 @@ public class AuctionController : ControllerBase
         [FromRoute] Guid auctionId,
         [FromQuery] LegalDocumentQuery query)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
         var result = await _legalDocumentService.GetLegalDocuments(auctionId: auctionId, query: query);
 
         return Ok(result);
@@ -92,6 +97,8 @@ public class AuctionController : ControllerBase
     public async Task<ActionResult<ListResponseBaseDto<GetAuctionMediasResponseDto>>> GetAuctionMedias(
         [FromRoute] Guid auctionId, [FromQuery] AuctionMediaQuery query)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
         var result = await _auctionMediaService.GetMedia(auctionId, query);
         return Ok(result);
     }
@@ -101,6 +108,9 @@ public class AuctionController : ControllerBase
     public async Task<ActionResult<ResultResponse<UpdateAuctionResponseDto>>> UpdateAuction(
         [FromRoute] Guid auctionId, [FromBody] UpdateAuctionRequestDto request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         ResultResponse<UpdateAuctionResponseDto> result = await _auctionService.UpdateAuction(auctionId, request);
         return Ok(result);
     }

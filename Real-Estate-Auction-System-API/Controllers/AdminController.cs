@@ -69,6 +69,8 @@ public class AdminController : ControllerBase
         // {
         //     return Unauthorized();
         // }
+        
+        if(!ModelState.IsValid) return BadRequest(ModelState);
 
         var result = await _adminService.DeleteAdminAsync(id);
         if (result.Status == Status.NotFound) return NotFound(result);
