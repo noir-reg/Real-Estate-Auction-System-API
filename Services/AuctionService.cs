@@ -23,7 +23,7 @@ public class AuctionService : IAuctionService
             var toBeAdded = new Auction
             {
                 Title = request.Title,
-                Status = AuctionStatus.ToBeSold,
+                Status = request.Status,
                 Description = request.Description,
                 RealEstateCode = request.RealEstateCode,
                 RegistrationPeriodStart = request.RegistrationPeriodStart,
@@ -141,7 +141,8 @@ public class AuctionService : IAuctionService
                         InitialPrice = x.InitialPrice,
                         Thumbnail = x.ThumbnailUrl!,
                         AuctionStart = x.AuctionPeriodStart,
-                        Status = x.Status
+                        Status = x.Status,
+                        ListingDate = x.ListingDate
                     }
                 ).ToListAsync();
 

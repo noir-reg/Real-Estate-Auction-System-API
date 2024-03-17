@@ -6,7 +6,6 @@ public class CreateAuctionResponseDto
     public string Title { get; set; }
     public string Status { get; set; }
     public string Description { get; set; }
-    public Guid RealEstateId { get; set; }
     public string RegistrationPeriodStart { get; set; }
     public string RegistrationPeriodEnd { get; set; }
     public decimal InitialPrice { get; set; }

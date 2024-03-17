@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240317114801_RemoveRedundantBidId")]
+    partial class RemoveRedundantBidId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +94,9 @@ namespace BusinessObjects.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("WinningBidBidId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("WinningBidId")
                         .HasColumnType("uniqueidentifier");
 
@@ -110,6 +115,8 @@ namespace BusinessObjects.Migrations
                     b.HasIndex("StaffId");
 
                     b.HasIndex("StaffUserId");
+
+                    b.HasIndex("WinningBidBidId");
 
                     b.ToTable("Auctions", (string)null);
                 });
@@ -206,8 +213,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("BidId");
 
-                    b.HasIndex("AuctionId")
-                        .IsUnique();
+                    b.HasIndex("AuctionId");
 
                     b.HasIndex("MemberId");
 
@@ -424,11 +430,17 @@ namespace BusinessObjects.Migrations
                         .WithMany("Auctions")
                         .HasForeignKey("StaffUserId");
 
+                    b.HasOne("BusinessObjects.Entities.Bid", "WinningBid")
+                        .WithMany()
+                        .HasForeignKey("WinningBidBidId");
+
                     b.Navigation("Admin");
 
                     b.Navigation("Owner");
 
                     b.Navigation("Staff");
+
+                    b.Navigation("WinningBid");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.AuctionMedia", b =>
@@ -464,8 +476,8 @@ namespace BusinessObjects.Migrations
             modelBuilder.Entity("BusinessObjects.Entities.Bid", b =>
                 {
                     b.HasOne("BusinessObjects.Entities.Auction", "Auction")
-                        .WithOne("WinningBid")
-                        .HasForeignKey("BusinessObjects.Entities.Bid", "AuctionId")
+                        .WithMany("Bids")
+                        .HasForeignKey("AuctionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -508,9 +520,9 @@ namespace BusinessObjects.Migrations
 
                     b.Navigation("AuctionRegistrations");
 
-                    b.Navigation("LegalDocuments");
+                    b.Navigation("Bids");
 
-                    b.Navigation("WinningBid");
+                    b.Navigation("LegalDocuments");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Bid", b =>

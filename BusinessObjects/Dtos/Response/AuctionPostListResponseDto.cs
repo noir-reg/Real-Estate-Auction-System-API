@@ -8,4 +8,5 @@ public class AuctionPostListResponseDto
     public string Thumbnail { get; set; } = "https://data.lvo.vn/media/upload/1004603/online-auction-sales_istock.jpg";
     public decimal InitialPrice { get; set; }
     public string Status { get; set; }
+    public DateTime ListingDate { get; set; }
 }

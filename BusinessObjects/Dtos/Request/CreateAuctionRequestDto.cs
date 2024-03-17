@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BusinessObjects.Entities;
 
 namespace BusinessObjects.Dtos.Request;
 
@@ -12,6 +13,9 @@ public class CreateAuctionRequestDto
 
     [Required(ErrorMessage = "Description is required")]
     public string Description { get; set; }
+    
+    [Required(ErrorMessage = "Status is required")]
+    public string Status { get; set; } = AuctionStatus.ToBeSold;
 
 
     [Required(ErrorMessage = "RegistrationPeriodEnd is required")]

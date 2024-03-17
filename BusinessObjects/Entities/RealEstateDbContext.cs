@@ -142,9 +142,11 @@ public class RealEstateDbContext : DbContext
                 .WithMany(e => e.Bids)
                 .HasForeignKey(e => e.MemberId);
 
-            builder.HasOne(e => e.Auction)
-                .WithMany(e => e.Bids)
-                .HasForeignKey(e => e.AuctionId);
+            builder.HasOne(e => e.Auction).WithOne(e=>e.WinningBid).HasForeignKey<Bid>(e=>e.AuctionId);
+            builder.HasIndex(x => new
+            {
+                x.AuctionId
+            });
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
             builder.Property(e => e.IsWinningBid).IsRequired();
         });

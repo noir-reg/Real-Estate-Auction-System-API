@@ -12,14 +12,9 @@ public class Auction
     public DateTime AuctionPeriodEnd { get; set; }
     public decimal InitialPrice { get; set; }
     public decimal IncrementalPrice { get; set; }
-    public Guid? StartingBidId { get; set; }
-    public Guid? CurrentBidId { get; set; }
     public Guid? WinningBidId { get; set; }
-    public Bid? StartingBid { get; set; }
-    public Bid? CurrentBid { get; set; }
     public Bid? WinningBid { get; set; }
     public string Status { get; set; }
-    public IEnumerable<Bid> Bids { get; set; } = new List<Bid>();
     public Guid? StaffId { get; set; }
     public Staff? Staff { get; set; }
     public Guid AdminId { get; set; }
