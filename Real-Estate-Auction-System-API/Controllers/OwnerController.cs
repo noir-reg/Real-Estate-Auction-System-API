@@ -22,11 +22,11 @@ namespace Real_Estate_Auction_System_API.Controllers
 
         [HttpGet()]
         [AllowAnonymous]
-        public async Task<ActionResult<ListResponseBaseDto<OwnerResponse>>> GetPaginationList([FromQuery] OwnerQuery request)
+        public async Task<ActionResult<ListResponseBaseDto<OwnerResponse>>> GetList([FromQuery] string? name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var data = await _ownerService.GetOwnersAsync(request);
+            var data = await _ownerService.GetOwnersAsync(name);
             return Ok(data);
         }
         [HttpGet("{id}")]

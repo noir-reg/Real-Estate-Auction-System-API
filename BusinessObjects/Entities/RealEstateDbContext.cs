@@ -99,6 +99,7 @@ public class RealEstateDbContext : DbContext
                 .HasForeignKey(e => e.AuctionId).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany<AuctionMedia>(e => e.AuctionMedias).WithOne(e => e.Auction).HasForeignKey(e => e.AuctionId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany<Bid>(e=>e.Bids).WithOne(e=>e.Auction).HasForeignKey(e=>e.AuctionId).OnDelete(DeleteBehavior.Cascade);
         });
 
 
@@ -141,12 +142,6 @@ public class RealEstateDbContext : DbContext
             builder.HasOne(e => e.Member)
                 .WithMany(e => e.Bids)
                 .HasForeignKey(e => e.MemberId);
-
-            builder.HasOne(e => e.Auction).WithOne(e=>e.WinningBid).HasForeignKey<Bid>(e=>e.AuctionId);
-            builder.HasIndex(x => new
-            {
-                x.AuctionId
-            });
             builder.Property(e => e.Amount).IsRequired().HasPrecision(18, 0);
         });
 

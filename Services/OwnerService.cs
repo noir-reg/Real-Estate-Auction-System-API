@@ -21,29 +21,18 @@ public class OwnerService : IOwnerService
         _ownerRepository = ownerRepository;
     }
 
-    public async Task<ListResponseBaseDto<OwnerResponse>> GetOwnersAsync(OwnerQuery request)
+    public async Task<List<OwnerResponse>> GetOwnersAsync(string? name)
     {
         try
         {
-            var offset = request.Offset;
-            var pageSize = request.PageSize;
-            var page = request.Page;
 
             var query = _ownerRepository.GetOwnerQuery();
 
-            if (!string.IsNullOrEmpty(request.Search?.FullName))
-                query = query.Where(x => x.FullName.Contains(request.Search.FullName));
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(x => x.FullName.Contains(name));
 
 
-            query = query.Skip(offset).Take(pageSize);
             
-            query = request.SortBy switch
-            {
-                OwnerSortBy.FullName => request.OrderDirection == OrderDirection.ASC
-                    ? query.OrderBy(x => x.FullName)
-                    : query.OrderByDescending(x => x.FullName),
-                _ => throw new ArgumentOutOfRangeException()
-            };
             
             
 
@@ -56,17 +45,9 @@ public class OwnerService : IOwnerService
                 Auctions = x.Auctions.ToList()
             }).ToListAsync();
 
-            var count = await _ownerRepository.GetOwnerCountAsync(request.Search);
+          
 
-            var result = new ListResponseBaseDto<OwnerResponse>
-            {
-                Data = data,
-                Page = page,
-                PageSize = pageSize,
-                Total = count
-            };
-
-            return result;
+            return data;
         }
         catch (Exception e)
         {
