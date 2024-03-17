@@ -36,16 +36,13 @@ public class OwnerService : IOwnerService
             
             
 
-            var data = await query.Include(x => x.Auctions).Select(x => new OwnerResponse
+            var data = await query.Select(x => new OwnerResponse
             {
                 FullName = x.FullName,
                 CitizenId = x.CitizenId,
                 ContactInformation = x.ContactInformation,
-                RealEstateOwnerId = x.RealEstateOwnerId,
-                Auctions = x.Auctions.ToList()
             }).ToListAsync();
 
-          
 
             return data;
         }
@@ -163,7 +160,6 @@ public class OwnerService : IOwnerService
                 FullName = owner.FullName,
                 CitizenId = owner.CitizenId,
                 ContactInformation = owner.ContactInformation,
-                Auctions = owner.Auctions.ToList()
             };
 
 
