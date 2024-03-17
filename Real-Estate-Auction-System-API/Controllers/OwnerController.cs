@@ -21,7 +21,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpGet()]
-        [Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         public async Task<ActionResult<ListResponseBaseDto<OwnerResponse>>> GetPaginationList([FromQuery] OwnerQuery request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -30,6 +30,7 @@ namespace Real_Estate_Auction_System_API.Controllers
             return Ok(data);
         }
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResultResponse<OwnerResponse>>> GetDetail([FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -39,7 +40,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResultResponse<AddOwnerResponseDto>>> Create([FromBody] AddOwnerRequestDto request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -49,7 +50,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResultResponse<OwnerUpdateResponseDto>>> Update([FromBody] OwnerUpdateRequestDto request, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -64,7 +65,7 @@ namespace Real_Estate_Auction_System_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResultResponse<DeleteStaffResponseDto>>> Delete([FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

@@ -19,7 +19,7 @@ public class BidController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<GetBidResponseDto>>> GetBids([FromQuery] BaseQueryDto request)
     {
         var result = await _bidService.GetBids(request);
@@ -27,7 +27,7 @@ public class BidController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<CreateBidResponseDto>>> CreateBid(
         CreateBidRequestDto request)
     {
@@ -35,7 +35,7 @@ public class BidController : ControllerBase
         return Ok(result);
     }
     [HttpGet("{id}")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<GetBidResponseDto>>> GetBidById(Guid id)
     {
         ResultResponse<GetBidResponseDto> result = await _bidService.GetBidById(id);

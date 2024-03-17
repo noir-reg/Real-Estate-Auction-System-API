@@ -25,7 +25,7 @@ public class AuctionController : ControllerBase
 
     
     [HttpPost()]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<CreateAuctionResponseDto>>> CreateAuction([FromBody] CreateAuctionRequestDto request)
     {
         var response = await _auctionService.CreateAuction(request);
@@ -49,7 +49,7 @@ public class AuctionController : ControllerBase
     }
     
     [HttpPost("{auctionId}/legal-documents")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UploadDocumentsResponseDto>>> UploadDocuments(
         [FromRoute] Guid auctionId, IFormFile file)
     {
@@ -69,7 +69,7 @@ public class AuctionController : ControllerBase
     }
 
     [HttpPost("{auctionId}/auction-medias")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UploadMediaResponseDto>>> UploadMedia(
         [FromRoute] Guid auctionId, IFormFile file)
     {

@@ -38,7 +38,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles ="Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<AddStaffResponseDto>>> Create([FromBody] AddStaffRequestDto request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -48,7 +48,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles ="Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UpdateStaffResponseDto>>> Update(
         [FromBody] UpdateStaffRequestDto request, [FromRoute] Guid id)
     {
@@ -64,7 +64,7 @@ public class StaffController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles ="Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<DeleteStaffResponseDto>>> Delete([FromRoute] Guid id)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

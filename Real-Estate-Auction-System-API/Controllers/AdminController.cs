@@ -19,7 +19,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<AdminListResponseDto>>> GetAdminsAsync(
         [FromQuery] AdminQuery request)
     {
@@ -31,7 +31,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<CreateAdminResponseDto>>> AddAdminAsync(
         [FromBody] AddAdminRequestDto request)
     {
@@ -48,7 +48,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<UpdateAdminResponseDto>> UpdateAdminAsync([FromRoute] Guid id,
         [FromBody] UpdateAdminRequestDto request)
     {
@@ -60,15 +60,15 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<DeleteAdminResponseDto>>> DeleteAdminAsync([FromRoute] Guid id)
     {
-        var adminId = Guid.Parse(User.FindFirst(claim => ClaimTypes.NameIdentifier.Equals(claim.Type))?.Value ?? string.Empty);
-
-        if (id == adminId)
-        {
-            return Unauthorized();
-        }
+        // var adminId = Guid.Parse(User.FindFirst(claim => ClaimTypes.NameIdentifier.Equals(claim.Type))?.Value ?? string.Empty);
+        //
+        // if (id == adminId)
+        // {
+        //     return Unauthorized();
+        // }
 
         var result = await _adminService.DeleteAdminAsync(id);
         if (result.Status == Status.NotFound) return NotFound(result);
