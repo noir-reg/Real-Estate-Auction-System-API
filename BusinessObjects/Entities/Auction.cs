@@ -31,4 +31,12 @@ public class Auction
     public IEnumerable<LegalDocument>? LegalDocuments { get; set; } = new List<LegalDocument>();
     public IEnumerable<AuctionMedia> AuctionMedias { get; set; } = new List<AuctionMedia>();
     public string? Address { get; set; }
+    public string? ThumbnailUrl { get; set; }
+}
+
+public static class AuctionStatus
+{
+    public const string ToBeSold = "Sắp diễn ra";
+    public const string Selling = "Đang diễn ra";
+    public const string Sold = "Đã thanh lý";
 }

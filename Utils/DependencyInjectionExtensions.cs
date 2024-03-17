@@ -22,7 +22,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IOwnerService, OwnerService>();
-
+        services.AddScoped<IAuctionMediaService, AuctionMediaService>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -38,6 +38,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ILegalDocumentRepository, LegalDocumentRepository>();
         services.AddScoped<IStaffRepository, StaffRepository>();
         services.AddScoped<IOwnerRepository, OwnerRepository>();
+        services.AddScoped<IAuctionMediaRepository, AuctionMediaRepository>();
     }
   
 }

@@ -15,4 +15,5 @@ public class CreateAuctionResponseDto
     public DateTime AuctionPeriodEnd { get; set; }
     public decimal IncrementalPrice { get; set; }
     public string RealEstateCode { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

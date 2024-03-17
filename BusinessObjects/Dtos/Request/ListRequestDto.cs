@@ -104,6 +104,7 @@ public class AuctionSortBy
 
 public class SearchAuctionQuery
 {
+    public string? Title { get; set; }
 }
 
 public enum UserSortBy
@@ -151,7 +152,19 @@ public enum LegalDocumentSortBy
 {
     FileName
 }
-public class AuctionPostsQuery : BaseQueryDto
+public class AuctionMediaQuery : BaseQueryDto
 {
-   public string? Title { get; set; } 
+    public AuctionMediaSortBy SortBy { get; set; }
+    public OrderDirection OrderDirection { get; set; }
+    public SearchAuctionMediaQuery? Search { get; set; }
+}
+
+public class SearchAuctionMediaQuery
+{
+    public string FileName { get; set; }
+}
+
+public enum AuctionMediaSortBy
+{
+    FileName
 }

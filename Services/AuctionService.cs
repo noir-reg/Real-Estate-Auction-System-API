@@ -9,15 +9,13 @@ namespace Services;
 public class AuctionService : IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
-    private readonly ILegalDocumentRepository _documentRepository;
 
-    public AuctionService(IAuctionRepository auctionRepository, ILegalDocumentRepository documentRepository)
+    public AuctionService(IAuctionRepository auctionRepository)
     {
         _auctionRepository = auctionRepository;
-        _documentRepository = documentRepository;
     }
 
-   
+
     public async Task<ResultResponse<CreateAuctionResponseDto>> CreateAuction(CreateAuctionRequestDto request)
     {
         try
@@ -25,7 +23,7 @@ public class AuctionService : IAuctionService
             var toBeAdded = new Auction
             {
                 Title = request.Title,
-                Status = "Active",
+                Status = AuctionStatus.ToBeSold,
                 Description = request.Description,
                 RealEstateCode = request.RealEstateCode,
                 RegistrationPeriodStart = request.RegistrationPeriodStart,
@@ -35,7 +33,8 @@ public class AuctionService : IAuctionService
                 AuctionPeriodStart = request.AuctionPeriodStart,
                 AuctionPeriodEnd = request.AuctionPeriodEnd,
                 IncrementalPrice = request.IncrementalPrice,
-                AdminId = request.AdminId
+                AdminId = request.AdminId,
+                OwnerId = request.OwnerId,
             };
 
             var data = await _auctionRepository.AddAuction(toBeAdded);
@@ -57,6 +56,7 @@ public class AuctionService : IAuctionService
                     AuctionPeriodStart = data.AuctionPeriodStart,
                     AuctionPeriodEnd = data.AuctionPeriodEnd,
                     IncrementalPrice = data.IncrementalPrice,
+                    ThumbnailUrl = data.ThumbnailUrl
                 },
                 Status = Status.Ok,
                 Messages = new[] { "Auction created successfully" }
@@ -67,61 +67,99 @@ public class AuctionService : IAuctionService
             return ErrorResponse.CreateErrorResponse<CreateAuctionResponseDto>(e);
         }
     }
-    
- 
+
 
     public async Task<ResultResponse<AuctionPostDetailResponseDto>> GetAuctionById(Guid auctionId)
     {
         try
         {
-            Auction? auction = await _auctionRepository.GetAuction(x=>x.AuctionId == auctionId); 
-            
-            if (auction == null)
+            var query = _auctionRepository.GetAuctionQuery();
+            query = query.Where(x => x.AuctionId == auctionId);
+
+            query = query.Include(x => x.LegalDocuments)
+                .Include(x => x.AuctionMedias)
+                .Include(x => x.Owner);
+
+            var data = await query.Select(x => new AuctionPostDetailResponseDto
             {
-                return new ResultResponse<AuctionPostDetailResponseDto>()
-                {
-                    IsSuccess = false,
-                    Status = Status.NotFound,
-                    Messages = new[] { "Auction not found" }
-                };
+                AuctionId = x.AuctionId,
+                Title = x.Title,
+                Status = x.Status,
+                Description = x.Description,
+                RealEstateCode = x.RealEstateCode,
+                RegistrationPeriodStart = x.RegistrationPeriodStart,
+                RegistrationPeriodEnd = x.RegistrationPeriodEnd,
+                InitialPrice = x.InitialPrice,
+                ListingDate = x.ListingDate,
+                AuctionPeriodStart = x.AuctionPeriodStart,
+                AuctionPeriodEnd = x.AuctionPeriodEnd,
+                IncrementalPrice = x.IncrementalPrice,
+                ThumbnailUrl = x.ThumbnailUrl,
+                Owner = x.Owner,
+                AuctionMedias = x.AuctionMedias,
+                LegalDocuments = x.LegalDocuments
+            }).SingleOrDefaultAsync();
+
+            if (data == null)
+            {
+                return ErrorResponse.CreateErrorResponse<AuctionPostDetailResponseDto>(message: "Auction not found");
             }
-            
-            var legalDocuments = await _documentRepository.GetLegalDocuments(x => x.AuctionId == auctionId);
-            
-            var data = new AuctionPostDetailResponseDto
-            {
-                AuctionId = auction.AuctionId,
-                Title = auction.Title,
-                Description = auction.Description,
-                InitialPrice = auction.InitialPrice,
-                AuctionPeriodStart = auction.AuctionPeriodStart,
-                AuctionPeriodEnd = auction.AuctionPeriodEnd,
-                IncrementalPrice = auction.IncrementalPrice,
-                RealEstateCode = auction.RealEstateCode,
-                RealEstateOwnerName = auction.Owner.FullName,
-                Address = auction.Address,
-                RegistrationPeriodStart = auction.RegistrationPeriodStart,
-                RegistrationPeriodEnd = auction.RegistrationPeriodEnd,
-                LegalDocuments = legalDocuments,
-                AuctionMedias = auction.AuctionMedias
-            };
 
             return new ResultResponse<AuctionPostDetailResponseDto>()
             {
                 IsSuccess = true,
                 Data = data,
                 Status = Status.Ok,
-                Messages = new[] { "Get auction successfully" }
+                Messages = new[] { "Auction retrieved successfully" }
             };
         }
         catch (Exception e)
         {
-            return new ResultResponse<AuctionPostDetailResponseDto>()
+            return ErrorResponse.CreateErrorResponse<AuctionPostDetailResponseDto>(e);
+        }
+    }
+
+    public async Task<ListResponseBaseDto<AuctionPostListResponseDto>> GetAuctions(AuctionQuery request)
+    {
+        try
+        {
+            var query = _auctionRepository.GetAuctionQuery();
+
             {
-                IsSuccess = false,
-                Messages = new[] { e.Message, e.InnerException?.Message },
-                Status = Status.Error
-            };
+                query = query.Where(predicate: string.IsNullOrEmpty(request.Search?.Title)
+                    ? x => x.Title.Contains(request.Search.Title)
+                    : null);
+
+                query = query.Skip(request.Offset).Take(request.PageSize);
+
+                var data = await query.Select(
+                    x => new AuctionPostListResponseDto()
+                    {
+                        AuctionId = x.AuctionId,
+                        Title = x.Title,
+                        InitialPrice = x.InitialPrice,
+                        Thumbnail = x.ThumbnailUrl!,
+                        AuctionStart = x.AuctionPeriodStart,
+                    }
+                ).ToListAsync();
+
+                var totalCount = await _auctionRepository.GetCountAsync(
+                    wherePredicate: !string.IsNullOrEmpty(request.Search?.Title)
+                        ? x => x.Title.Contains(request.Search.Title)
+                        : null);
+
+                return new ListResponseBaseDto<AuctionPostListResponseDto>()
+                {
+                    Data = data,
+                    Page = request.Page,
+                    PageSize = request.PageSize,
+                    Total = totalCount
+                };
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
         }
     }
 }

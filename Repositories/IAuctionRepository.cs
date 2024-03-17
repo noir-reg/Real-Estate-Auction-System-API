@@ -13,6 +13,6 @@ public interface IAuctionRepository
 
     // Task<ListResponseDto<Auction>> GetAuctions(ListRequestDto<Auction> request);
     IQueryable<Auction> GetAuctionQuery();
-    Task<int> GetCountAsync(Expression<Func<Auction, bool>>? wherePredicate);
+    Task<int> GetCountAsync(Expression<Func<Auction, bool>>? wherePredicate = null);
     Task<Auction?> GetAuction(Expression<Func<Auction,bool>> predicate);
 }

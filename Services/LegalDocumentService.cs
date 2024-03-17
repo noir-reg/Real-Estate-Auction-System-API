@@ -69,12 +69,7 @@ public class LegalDocumentService : ILegalDocumentService
         }
         catch (Exception e)
         {
-            return new ResultResponse<UploadDocumentsResponseDto>()
-            {
-                Status = Status.Error,
-                Messages = new[] { e.Message,e.InnerException?.Message },
-                IsSuccess = false
-            };
+            return ErrorResponse.CreateErrorResponse<UploadDocumentsResponseDto>(e);
         }
     }
 

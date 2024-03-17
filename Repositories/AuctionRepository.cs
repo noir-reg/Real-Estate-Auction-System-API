@@ -84,7 +84,7 @@ public class AuctionRepository : IAuctionRepository
         return _context.Auctions.AsQueryable();
     }
 
-    public Task<int> GetCountAsync(Expression<Func<Auction, bool>>? wherePredicate)
+    public Task<int> GetCountAsync(Expression<Func<Auction, bool>>? wherePredicate = null)
     {
         try
         {

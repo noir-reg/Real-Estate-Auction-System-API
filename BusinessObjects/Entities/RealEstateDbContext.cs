@@ -24,6 +24,7 @@ public class RealEstateDbContext : DbContext
     public virtual DbSet<Admin> Admins { get; set; }
     public virtual DbSet<Bid> Bids { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<AuctionMedia> AuctionMedias { get; set; }
     
     public virtual DbSet<RealEstateOwner> RealEstateOwners { get; set; }
     public virtual DbSet<LegalDocument> LegalDocuments { get; set; }

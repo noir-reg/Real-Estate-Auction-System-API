@@ -13,8 +13,6 @@ public class CreateAuctionRequestDto
     [Required(ErrorMessage = "Description is required")]
     public string Description { get; set; }
 
-    [Required(ErrorMessage = "RealEstateId is required")]
-    public Guid RealEstateId { get; set; }
 
     [Required(ErrorMessage = "RegistrationPeriodEnd is required")]
     public DateTime RegistrationPeriodEnd { get; set; }
@@ -36,4 +34,6 @@ public class CreateAuctionRequestDto
 
     [Required(ErrorMessage = "RealEstateCode is required")]
     public string RealEstateCode { get; set; }
+
+    public Guid OwnerId { get; set; }
 }
