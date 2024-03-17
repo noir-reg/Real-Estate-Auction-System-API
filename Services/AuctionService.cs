@@ -91,6 +91,7 @@ public class AuctionService : IAuctionService
                 RegistrationPeriodEnd = x.RegistrationPeriodEnd,
                 InitialPrice = x.InitialPrice,
                 ListingDate = x.ListingDate,
+                Address = x.Address,
                 AuctionPeriodStart = x.AuctionPeriodStart,
                 AuctionPeriodEnd = x.AuctionPeriodEnd,
                 IncrementalPrice = x.IncrementalPrice,

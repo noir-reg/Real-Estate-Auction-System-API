@@ -7,7 +7,6 @@ public class AuctionPostDetailResponseDto
     public Guid AuctionId { get; set; }
     public string? Title { get; set; }
     public string? RealEstateCode { get; set; }
-    public string? RealEstateOwnerName { get; set; }
     
     public decimal InitialPrice { get; set; }
     public decimal IncrementalPrice { get; set; }
