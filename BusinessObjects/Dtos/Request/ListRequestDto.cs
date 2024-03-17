@@ -31,8 +31,8 @@ public class UserQuery : BaseQueryDto
 
 public class AuctionQuery : BaseQueryDto
 {
-    public AuctionSortBy SortBy { get; set; }
-    public OrderDirection OrderDirection { get; set; }
+    // public AuctionSortBy SortBy { get; set; }
+    // public OrderDirection OrderDirection { get; set; }
     public SearchAuctionQuery? Search { get; set; }
 }
 
@@ -98,8 +98,9 @@ public class SearchStaffQuery
     public string? Username { get; set; }
 }
 
-public class AuctionSortBy
+public enum AuctionSortBy
 {
+   Title 
 }
 
 public class SearchAuctionQuery

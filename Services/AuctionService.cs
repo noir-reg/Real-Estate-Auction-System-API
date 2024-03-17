@@ -130,6 +130,7 @@ public class AuctionService : IAuctionService
                     ? x => x.Title.Contains(request.Search.Title)
                     : null);
 
+                query = query.OrderBy(x => x.Title);
                 query = query.Skip(request.Offset).Take(request.PageSize);
 
                 var data = await query.Select(

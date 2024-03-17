@@ -32,7 +32,11 @@ public class AuthService : IAuthService
                 UserId = data.UserId,
                 Email = data.Email,
                 Username = data.Username,
-                Role = data.Role
+                Role = data.Role,
+                DateOfBirth
+                    = data.DateOfBirth,
+                Gender = data.Gender,
+                PhoneNumber = data.PhoneNumber
             };
             return userInfo;
         }
