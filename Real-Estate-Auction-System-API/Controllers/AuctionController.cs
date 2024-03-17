@@ -16,17 +16,19 @@ public class AuctionController : ControllerBase
     private readonly ILegalDocumentService _legalDocumentService;
     private readonly IAuctionMediaService _auctionMediaService;
 
-    public AuctionController(IAuctionService auctionService, ILegalDocumentService legalDocumentService, IAuctionMediaService auctionMediaService)
+    public AuctionController(IAuctionService auctionService, ILegalDocumentService legalDocumentService,
+        IAuctionMediaService auctionMediaService)
     {
         _auctionService = auctionService;
         _legalDocumentService = legalDocumentService;
         _auctionMediaService = auctionMediaService;
     }
 
-    
+
     [HttpPost()]
     [AllowAnonymous]
-    public async Task<ActionResult<ResultResponse<CreateAuctionResponseDto>>> CreateAuction([FromBody] CreateAuctionRequestDto request)
+    public async Task<ActionResult<ResultResponse<CreateAuctionResponseDto>>> CreateAuction(
+        [FromBody] CreateAuctionRequestDto request)
     {
         var response = await _auctionService.CreateAuction(request);
         return Ok(response);
@@ -42,12 +44,13 @@ public class AuctionController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<ListResponseBaseDto<AuctionPostListResponseDto>>> GetAuctions([FromQuery] AuctionQuery request)
+    public async Task<ActionResult<ListResponseBaseDto<AuctionPostListResponseDto>>> GetAuctions(
+        [FromQuery] AuctionQuery request)
     {
-       ListResponseBaseDto<AuctionPostListResponseDto> response = await _auctionService.GetAuctions(request);
-       return Ok(response);
+        ListResponseBaseDto<AuctionPostListResponseDto> response = await _auctionService.GetAuctions(request);
+        return Ok(response);
     }
-    
+
     [HttpPost("{auctionId}/legal-documents")]
     [AllowAnonymous]
     public async Task<ActionResult<ResultResponse<UploadDocumentsResponseDto>>> UploadDocuments(
@@ -78,15 +81,14 @@ public class AuctionController : ControllerBase
         {
             return BadRequest();
         }
-        
+
         if (file.Length > FileChecker.FILE_SIZE_LIMIT)
         {
             return BadRequest();
         }
-        
+
         ResultResponse<UploadMediaResponseDto> result = await _auctionMediaService.UploadMedia(auctionId, file);
         return Ok(result);
-
     }
 
     [HttpGet("{auctionId}/legal-documents")]
@@ -103,10 +105,27 @@ public class AuctionController : ControllerBase
     [HttpGet("{auctionId}/auction-medias")]
     [AllowAnonymous]
     public async Task<ActionResult<ListResponseBaseDto<GetAuctionMediasResponseDto>>> GetAuctionMedias(
-        [FromRoute] Guid auctionId,[FromQuery] AuctionMediaQuery query)
+        [FromRoute] Guid auctionId, [FromQuery] AuctionMediaQuery query)
     {
-       var result = await _auctionMediaService.GetMedia(auctionId,query);
-       return Ok(result);
+        var result = await _auctionMediaService.GetMedia(auctionId, query);
+        return Ok(result);
+    }
+
+    [HttpPut("{auctionId}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ResultResponse<UpdateAuctionResponseDto>>> UpdateAuction(
+        [FromRoute] Guid auctionId, [FromBody] UpdateAuctionRequestDto request)
+    {
+        ResultResponse<UpdateAuctionResponseDto> result = await _auctionService.UpdateAuction(auctionId, request);
+        return Ok(result);
+    }
+
+    [HttpDelete("{auctionId}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ResultResponse<DeleteAuctionResponseDto>>> DeleteAuction(
+        [FromRoute] Guid auctionId)
+    {
+       ResultResponse<DeleteAuctionResponseDto> result = await _auctionService.DeleteAuction(auctionId); 
+        return Ok(result);
     }
 }
-

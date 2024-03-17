@@ -9,4 +9,6 @@ public interface IAuctionService
     Task<ResultResponse<CreateAuctionResponseDto>> CreateAuction(CreateAuctionRequestDto request);
     Task<ResultResponse<AuctionPostDetailResponseDto>> GetAuctionById(Guid auctionId);
     Task<ListResponseBaseDto<AuctionPostListResponseDto>> GetAuctions(AuctionQuery request);
+    Task<ResultResponse<UpdateAuctionResponseDto>> UpdateAuction(Guid auctionId, UpdateAuctionRequestDto request);
+    Task<ResultResponse<DeleteAuctionResponseDto>> DeleteAuction(Guid auctionId);
 }

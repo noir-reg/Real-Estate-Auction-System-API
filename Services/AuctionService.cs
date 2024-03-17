@@ -164,4 +164,114 @@ public class AuctionService : IAuctionService
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<ResultResponse<UpdateAuctionResponseDto>> UpdateAuction(Guid auctionId,
+        UpdateAuctionRequestDto request)
+    {
+        try
+        {
+            var toBeUpdated = await _auctionRepository.GetAuction(x => x.AuctionId == auctionId);
+            if (toBeUpdated == null)
+            {
+                return ErrorResponse.CreateErrorResponse<UpdateAuctionResponseDto>(status: Status.NotFound,
+                    message: "Auction not found");
+            }
+
+            toBeUpdated.Title = !string.IsNullOrEmpty(request.Title) ? request.Title : toBeUpdated.Title;
+            toBeUpdated.Description = !string.IsNullOrEmpty(request.Description)
+                ? request.Description
+                : toBeUpdated.Description;
+            toBeUpdated.RealEstateCode = !string.IsNullOrEmpty(request.RealEstateCode)
+                ? request.RealEstateCode
+                : toBeUpdated.RealEstateCode;
+            toBeUpdated.Address = !string.IsNullOrEmpty(request.Address) ? request.Address : toBeUpdated.Address;
+            toBeUpdated.ThumbnailUrl = !string.IsNullOrEmpty(request.ThumbnailUrl)
+                ? request.ThumbnailUrl
+                : toBeUpdated.ThumbnailUrl;
+            toBeUpdated.RegistrationPeriodStart =
+                request.RegistrationPeriodStart ?? toBeUpdated.RegistrationPeriodStart;
+            toBeUpdated.RegistrationPeriodEnd = request.RegistrationPeriodEnd ?? toBeUpdated.RegistrationPeriodEnd;
+            toBeUpdated.InitialPrice = request.InitialPrice ?? toBeUpdated.InitialPrice;
+            toBeUpdated.ListingDate = request.ListingDate ?? toBeUpdated.ListingDate;
+            toBeUpdated.AuctionPeriodStart = request.AuctionPeriodStart ?? toBeUpdated.AuctionPeriodStart;
+            toBeUpdated.AuctionPeriodEnd = request.AuctionPeriodEnd ?? toBeUpdated.AuctionPeriodEnd;
+            toBeUpdated.IncrementalPrice = request.IncrementalPrice ?? toBeUpdated.IncrementalPrice;
+            toBeUpdated.Status = !string.IsNullOrEmpty(request.Status) ? request.Status : toBeUpdated.Status;
+            toBeUpdated.OwnerId = request.OwnerId ?? toBeUpdated.OwnerId;
+
+            await _auctionRepository.UpdateAuction(toBeUpdated);
+
+            return new ResultResponse<UpdateAuctionResponseDto>()
+            {
+                IsSuccess = true,
+                Data = new UpdateAuctionResponseDto
+                {
+                    AuctionId = toBeUpdated.AuctionId,
+                    Title = toBeUpdated.Title,
+                    Description = toBeUpdated.Description,
+                    RealEstateCode = toBeUpdated.RealEstateCode,
+                    Address = toBeUpdated.Address,
+                    ThumbnailUrl = toBeUpdated.ThumbnailUrl,
+                    RegistrationPeriodStart = toBeUpdated.RegistrationPeriodStart,
+                    RegistrationPeriodEnd = toBeUpdated.RegistrationPeriodEnd,
+                    InitialPrice = toBeUpdated.InitialPrice,
+                    ListingDate = toBeUpdated.ListingDate,
+                    AuctionPeriodStart = toBeUpdated.AuctionPeriodStart,
+                    AuctionPeriodEnd = toBeUpdated.AuctionPeriodEnd,
+                    IncrementalPrice = toBeUpdated.IncrementalPrice,
+                    Status = toBeUpdated.Status,
+                    OwnerId = toBeUpdated.OwnerId
+                },
+                Status = Status.Ok,
+                Messages = new[] { "Auction updated successfully" }
+            };
+        }
+        catch (Exception e)
+        {
+            return ErrorResponse.CreateErrorResponse<UpdateAuctionResponseDto>(e);
+        }
+    }
+
+    public async Task<ResultResponse<DeleteAuctionResponseDto>> DeleteAuction(Guid auctionId)
+    {
+        try
+        {
+            var toBeDeleted = await _auctionRepository.GetAuction(x => x.AuctionId == auctionId);
+
+            if (toBeDeleted == null)
+                return ErrorResponse.CreateErrorResponse<DeleteAuctionResponseDto>(status: Status.NotFound,
+                    message: "Auction not found");
+            
+            await _auctionRepository.DeleteAuction(toBeDeleted);
+
+            return new ResultResponse<DeleteAuctionResponseDto>()
+            {
+                IsSuccess = true,
+                Data = new DeleteAuctionResponseDto
+                {
+                    AuctionId = toBeDeleted.AuctionId,
+                    Title = toBeDeleted.Title,
+                    Description = toBeDeleted.Description,
+                    RealEstateCode = toBeDeleted.RealEstateCode,
+                    Address = toBeDeleted.Address,
+                    ThumbnailUrl = toBeDeleted.ThumbnailUrl,
+                    RegistrationPeriodStart = toBeDeleted.RegistrationPeriodStart,
+                    RegistrationPeriodEnd = toBeDeleted.RegistrationPeriodEnd,
+                    InitialPrice = toBeDeleted.InitialPrice,
+                    ListingDate = toBeDeleted.ListingDate,
+                    AuctionPeriodStart = toBeDeleted.AuctionPeriodStart,
+                    AuctionPeriodEnd = toBeDeleted.AuctionPeriodEnd,
+                    IncrementalPrice = toBeDeleted.IncrementalPrice,
+                    Status = toBeDeleted.Status,
+                    OwnerId = toBeDeleted.OwnerId
+                },
+                Status = Status.Ok,
+                Messages = new[] { "Auction deleted successfully" }
+            };
+        }
+        catch (Exception e)
+        {
+            return ErrorResponse.CreateErrorResponse<DeleteAuctionResponseDto>(e);
+        }
+    }
 }
