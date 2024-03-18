@@ -32,8 +32,6 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         
         //Cái này để migrate db, khi nào gần tới present thì xóa
-        builder.Services.AddDbContext<RealEstateDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(
-            builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo { Title = "REASProject", Version = "v1" });
